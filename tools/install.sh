@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 main() {
   # Use colors, but only if connected to a terminal, and that terminal
   # supports them.
@@ -24,6 +25,28 @@ main() {
   # which may fail on systems lacking tput or terminfo
   set -e
 
+  printf "${BLUE}Check requirements ...${NORMAL}\n"
+  for command in docker docker-compose await
+  do
+    command -v $command >/dev/null 2>&1 || {
+      echo "${RED}Error: $command is not installed"
+      exit 1
+    }
+  done
+
+  bash --version | grep "version 4\." >/dev/null 2>&1  || {
+      echo "${RED}Error: bash 4 is not installed"
+      if [ "$OSTYPE" != 'linux-gnu' ]; then
+          echo ""
+          echo "On mac OSX you can install it, run :"
+          echo ""
+          echo "brew install bash"
+          echo "echo '/usr/local/bin/bash' | sudo tee -a /etc/shells;"
+          echo ""
+      fi
+      exit 1
+  }
+
   if [ ! -n "$JETDOCKER" ]; then
     JETDOCKER=~/.jetdocker
   fi
@@ -43,19 +66,19 @@ main() {
 
   printf "${BLUE}Cloning Jetdocker...${NORMAL}\n"
   command -v git >/dev/null 2>&1 || {
-    echo "Error: git is not installed"
+    echo "${RED}Error: git is not installed"
     exit 1
   }
   # The Windows (MSYS) Git is not compatible with normal use on cygwin
   if [ "$OSTYPE" = cygwin ]; then
     if git --version | grep msysgit > /dev/null; then
-      echo "Error: Windows/MSYS Git is not supported on Cygwin"
-      echo "Error: Make sure the Cygwin git package is installed and is first on the path"
+      echo "${RED}Error: Windows/MSYS Git is not supported on Cygwin"
+      echo "${RED}Error: Make sure the Cygwin git package is installed and is first on the path"
       exit 1
     fi
   fi
-  env git clone --depth=1 https://github.com/coordtechjetpulp/jetdocker.git "$JETDOCKER" || {
-    printf "Error: git clone of jetdocker repo failed\n"
+  env git clone -b develop https://github.com/coordtechjetpulp/jetdocker.git "$JETDOCKER" || {
+    printf "${RED}Error: git clone of jetdocker repo failed\n"
     exit 1
   }
 
@@ -74,24 +97,39 @@ main() {
   sed "/^export JETDOCKER=/ c\\
   export JETDOCKER=\"$JETDOCKER\"
   " ~/.jetdockerrc > ~/.jetdockerrc-temp
+  sed "/^export USER_UID=/ c\\
+  export USER_UID=\"$(id -u)\"
+  " ~/.jetdockerrc-temp > ~/.jetdockerrc-temp
+  sed "/^export USER_GROUP=/ c\\
+  export USER_GROUP=\"$(id -g)\"
+  " ~/.jetdockerrc-temp > ~/.jetdockerrc-temp
   mv -f ~/.jetdockerrc-temp ~/.jetdockerrc
 
+  printf "${BLUE}Source .jetdockerrc in your shell${NORMAL}\n"
+  if [ -f ~/.zshrc ] ;
+  then
+      if ! grep -q "jetdockerrc" ~/.zshrc;
+      then
+          echo ". ~/.jetdockerrc" >>  ~/.zshrc
+      fi
+  fi
 
+  if [ -f ~/.bashrc ] ;
+  then
+      if ! grep -q "jetdockerrc" ~/.bashrc;
+      then
+          echo ". ~/.jetdockerrc" >>  ~/.bashrc
+      fi
+  fi
 
-#
-#  # If this user's login shell is not already "zsh", attempt to switch.
-#  TEST_CURRENT_SHELL=$(expr "$SHELL" : '.*/\(.*\)')
-#  if [ "$TEST_CURRENT_SHELL" != "zsh" ]; then
-#    # If this platform provides a "chsh" command (not Cygwin), do it, man!
-#    if hash chsh >/dev/null 2>&1; then
-#      printf "${BLUE}Time to change your default shell to zsh!${NORMAL}\n"
-#      chsh -s $(grep /zsh$ /etc/shells | tail -1)
-#    # Else, suggest the user do so manually.
-#    else
-#      printf "I can't change your shell automatically because this system does not have chsh.\n"
-#      printf "${BLUE}Please manually change your default shell to zsh!${NORMAL}\n"
-#    fi
-#  fi
+  if [ -f ~/.bash_profile ] ;
+  then
+      if ! grep -q "jetdockerrc" ~/.bash_profile;
+      then
+          echo ". ~/.jetdockerrc" >>  ~/.bash_profile
+      fi
+  fi
+  . ~/.jetdockerrc
 
   printf "${GREEN}"
   echo '                                          '
@@ -102,7 +140,7 @@ main() {
   echo '|___/                                     '
   echo '                                         ....is now installed!'
   echo ''
-  echo 'Please look over the ~/.jetdocker file to select options.'
+  echo 'Please look over the ~/.jetdockerrc file to set options.'
   echo ''
   printf "${NORMAL}"
 }

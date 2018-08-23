@@ -1,0 +1,8 @@
+# custom files
+custom/
+!custom/plugins/example
+!custom/example.sh
+
+# temp files directories
+cache/
+log/
