@@ -1,8 +1,12 @@
 # custom files
 custom/
-!custom/plugins/example
+!custom/plugins/example.sh
 !custom/example.sh
 
 # temp files directories
 cache/
 log/
+
+# cacerts directories
+cacerts
+!cacerts/.gitkeep
