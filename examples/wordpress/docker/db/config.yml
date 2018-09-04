@@ -1,0 +1,5 @@
+search-and-replace-db:
+    - local      : $SERVER_NAME
+      production : www.project.com
+    - local      : $SERVER_NAME_ALIAS
+      production : www.alias-project.com

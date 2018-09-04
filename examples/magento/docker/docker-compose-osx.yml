@@ -1,0 +1,11 @@
+# this is our osx docker-compose building on top of the docker-compose
+version: "2.0"
+services:
+  web:
+    volumes:
+      - "../:/var/www/html:cached"
+      - "cache:/var/www/html/var/cache"
+
+# that the important thing
+volumes:
+  cache:

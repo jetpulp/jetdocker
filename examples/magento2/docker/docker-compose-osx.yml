@@ -1,0 +1,26 @@
+# this is our osx docker-compose building on top of the docker-compose, just mounting
+# the sync image - and set the USER_ID
+
+version: "2.0"
+services:
+  web:
+    volumes:
+      - "..:/var/www/html:cached"
+      - "static:/var/www/html/pub/static"
+  engine:
+    volumes:
+      - "..:/var/www/html:cached"
+      - "generated:/var/www/html/generated"
+      - "var:/var/www/html/var"
+      - "static:/var/www/html/pub/static"
+  composer:
+    volumes:
+      - "generated:/app/generated"
+      - "var:/app/var"
+      - "static:/app/pub/static"
+
+# that the important thing
+volumes:
+  generated:
+  var:
+  static:

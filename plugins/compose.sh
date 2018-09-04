@@ -149,17 +149,17 @@ delete-data-volumes()
 
         # remove db container in case he's only stopped
         try {
-            docker rm -f "${COMPOSE_PROJECT_NAME}-db" > /dev/null 2>&1
+            docker rm -f "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}" > /dev/null 2>&1
         } catch {
-            Log "No container ${COMPOSE_PROJECT_NAME}-db to delete"
+            Log "No container ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE} to delete"
         }
         # remove dbdata volume
         try {
-            docker volume rm "${COMPOSE_PROJECT_NAME}-dbdata" > /dev/null 2>&1
+            docker volume rm "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
             sleep 1 # some time the docker inspect next command don't relalize the volume has been deleted ! wait a moment is better
-            echo "$(UI.Color.Green)${COMPOSE_PROJECT_NAME}-dbdata volume DELETED ! $(UI.Color.Default)"
+            echo "$(UI.Color.Green)${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data volume DELETED ! $(UI.Color.Default)"
         } catch {
-            Log "No ${COMPOSE_PROJECT_NAME}-dbdata volume to delete"
+            Log "No ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data volume to delete"
         }
         Compose::DeleteExtraDataVolumes
 
@@ -193,9 +193,9 @@ init-data-containers()
 {
     # Database data volume :
     try {
-        docker volume inspect "${COMPOSE_PROJECT_NAME}-dbdata" > /dev/null 2>&1
+        docker volume inspect "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
     } catch {
-        docker volume create --name "${COMPOSE_PROJECT_NAME}-dbdata" > /dev/null 2>&1
+        docker volume create --name "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
         DatabaseBackup::Fetch
 
         # run init-extra-data-containers before compose up because it can need volumes created in init-extra-data-containers
@@ -210,7 +210,7 @@ init-data-containers()
         echo "Waiting ${DB_RESTORE_TIMEOUT} for mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE is ready ...... "
         echo ""
         echo "$(UI.Color.Green)follow database restoration logs in an other terminal running this command : "
-        echo "$(UI.Color.Blue)  docker logs -f ${COMPOSE_PROJECT_NAME}-db"
+        echo "$(UI.Color.Blue)  docker logs -f ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}"
         echo "$(UI.Color.Yellow)(if you see errors in logs and the restoration is blocked, cancel it here with CTRL+C)$(UI.Color.Default)"
         echo ""
         echo "$(UI.Color.Green)  Please wait ${DB_RESTORE_TIMEOUT} ... "

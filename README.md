@@ -2,10 +2,10 @@ Jetdocker
 ==============
 ![Jetdocker](https://raw.githubusercontent.com/docker/compose/master/logo.png "Docker Compose Logo")
 
-`jetdocker` is an open source framework for managing multiple docker-compose projects, especially for PHP developpement, but not only.
+`jetdocker` is a wrapper around docker-compose, especially opinionated for PHP developpement, but not only.
 
 Some of the features are :
-* can run several docker-compose projects, bind automatically to free ports if some try to bind on the same, and use a reverse-http-proxy
+* can run several docker-compose projects, bind automatically to free ports if some try to bind on the same, using a reverse-http-proxy
 * smooth database restoration, can use Search and Replace DB automatically
 * SSL-TLS auto-signed certificate automatically created and configured, in order to test on https
 * xdebug integration
@@ -18,9 +18,19 @@ Some of the features are :
 __Disclaimer:__ _Jetdocker works on macOS and Linux._
 
 * Unix-like operating system (macOS or Linux)
+* bash 4
 * `docker` and `docker-compose` should be installed
 * `git` should be installed
 * `await` should be installed
+
+#### Install bash4
+
+On macOSX bash3 is installed by default, but you can install bash4
+
+```shell
+brew install bash
+echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
+```
 
 #### Install await
 
@@ -55,6 +65,14 @@ sh -c "$(wget https://raw.githubusercontent.com/coordtechjetpulp/jetdocker/maste
 
 ### Basic Usage
 
+In order to use `jetdocker` in your project you need a `docker` directory, containing all the jetdocker config files.
+This is the default path must you can specify a different path with the `-c` option.
+
+You can find some examples of docker config directory in the `examples` directory of this repository, "ready to use" for wordpress, magento or symfony projects.
+
+The bare minimum is a `docker-compose.yml` and a `env.sh` in this directory.
+
+
 The main usage of jetdocker is to run a docker-compose config :
 
 ```shell
@@ -66,6 +84,18 @@ See all available commands and options
 ```shell
 jetdocker --help
 ```
+#### Environnement variables in env.sh
+
+The env.sh file is required in order to define some environement variables on each project
+
+* COMPOSE_PROJECT_NAME : (required) a prefix used for naming containers and volumes
+* JETDOCKER_UP_DEFAULT_SERVICE : (optional, default=web) docker-compose service used by `jetdocker up`
+* JETDOCKER_DB_DEFAULT_SERVICE : (optional, default=db) docker-compose service used for database restoration
+* JETDOCKER_TERM_DEFAULT_SERVICE : (optional) docker-compose service used by `jetdocker term`
+* DB_RESTORE_TIMEOUT : (optional, default=3m0s)database restoration timeout
+* SERVER_NAME : (required) hostname
+* VIRTUAL_HOST : (required) list of hostnames, separated by comma
+* MYSQL_DATABASE : (optional) name of the database
 
 ## Getting Updates
 

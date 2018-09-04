@@ -1,0 +1,64 @@
+version: "2.0"
+
+services:
+    web:
+        container_name: ${COMPOSE_PROJECT_NAME}-web
+        image: jetpulp/php70-apache
+        ports:
+            - "${DOCKER_PORT_HTTP}:80"
+            - "${DOCKER_PORT_HTTPS}:443"
+        volumes:
+            - ../:/var/www/html
+            - ./web/vhost.conf:/etc/apache2/sites-enabled/vhost.conf
+            - ./web/php.ini:/usr/local/etc/php/php.ini
+            - jetdocker-ssl-certificate:/certs
+            - "~/.composer:/composer"
+            - "~/.ssh:/home/www-data/.ssh"
+        environment:
+            - SERVER_NAME
+            - VIRTUAL_HOST
+            - USER_UID
+            - USER_GROUP
+            - XDEBUG_ENABLED
+        depends_on:
+            - db
+            - redis
+            - mailhog
+            - blackfire
+    db:
+        container_name: ${COMPOSE_PROJECT_NAME}-db
+        image: mariadb:10.0
+        ports:
+            - "${DOCKER_PORT_MYSQL}:3306"
+        volumes:
+            - ./db:/docker-entrypoint-initdb.d
+            - dbdata:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE
+            - SERVER_NAME
+            - ORIGINAL_SERVER_NAME
+    redis:
+        container_name: ${COMPOSE_PROJECT_NAME}-redis
+        image: redis
+    mailhog:
+        container_name: ${COMPOSE_PROJECT_NAME}-mailhog
+        image: mailhog/mailhog
+        ports:
+            - "${DOCKER_PORT_MAILHOG}:8025"
+    blackfire:
+        container_name: ${COMPOSE_PROJECT_NAME}-blackfire
+        image: blackfire/blackfire
+        environment:
+            - BLACKFIRE_SERVER_ID
+            - BLACKFIRE_SERVER_TOKEN
+volumes:
+  dbdata:
+    external:
+      name: ${COMPOSE_PROJECT_NAME}-dbdata
+  jetdocker-ssl-certificate:
+    external: true
+
+networks:
+    default:
+        driver: bridge

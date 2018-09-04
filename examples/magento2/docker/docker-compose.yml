@@ -1,0 +1,114 @@
+version: "2.0"
+
+services:
+  web:
+    container_name: ${COMPOSE_PROJECT_NAME}-web
+    image: nginx
+    depends_on:
+      - engine
+      - db
+    ports:
+      - "${DOCKER_PORT_HTTP}:80"
+      - "${DOCKER_PORT_HTTPS}:443"
+    volumes:
+        - "./nginx/default.template:/etc/nginx/conf.d/default.template:ro"
+        - "./nginx/bin/start.sh:/usr/local/bin/start.sh"
+        - "..:/var/www/html"
+        - jetdocker-ssl-certificate:/certs
+    environment:
+        - VIRTUAL_HOST
+        - SERVER_NAME
+    command: /usr/local/bin/start.sh
+  engine:
+    container_name: ${COMPOSE_PROJECT_NAME}-engine
+    image: jetpulp/php70-magento2
+    depends_on:
+        - db
+        - redis
+        - mailhog
+    volumes:
+        - "./php-fpm/php.ini:/usr/local/etc/php/php.ini"
+        - "..:/var/www/html"
+        - ~/.composer:/composer
+        - ~/.ssh:/home/www-data/.ssh
+    environment:
+        - USER_UID
+        - USER_GROUP
+        - SERVER_NAME
+        - BLACKFIRE_CLIENT_ID
+        - BLACKFIRE_CLIENT_TOKEN
+        - XDEBUG_ENABLED
+  db:
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    image: mariadb:10.0
+    ports:
+        - "${DOCKER_PORT_MYSQL}:3306"
+    volumes:
+        - ./db:/docker-entrypoint-initdb.d
+        - dbdata:/var/lib/mysql
+    environment:
+        - MYSQL_ROOT_PASSWORD
+        - MYSQL_DATABASE
+        - MYSQL_USER
+        - MYSQL_PASSWORD
+        - SERVER_NAME
+        - ORIGINAL_SERVER_NAME
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  composer:
+    image: registry.jetpulp.fr:5000/dev/composer
+    user: $USER_UID:$USER_GROUP
+#    command: /usr/local/bin/mage-setup
+    command: install
+    depends_on:
+      - db
+    volumes:
+      - ./setup/mage-setup:/usr/local/bin/mage-setup
+      - ..:/app
+      - ~/.composer:/composer
+      - ~/.composer/docker_passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ~/.ssh:/home/www-data/.ssh
+      - $SSH_AUTH_SOCK:/ssh-auth.sock # Forward local machine SSH key to docker : ne fonctionne que sur les linux
+    environment:
+      - SSH_AUTH_SOCK=/ssh-auth.sock
+      - M2SETUP_DB_HOST=db
+      - M2SETUP_DB_NAME=$MYSQL_DATABASE
+      - M2SETUP_DB_USER=$MYSQL_USER
+      - M2SETUP_DB_PASSWORD=$MYSQL_PASSWORD
+      - M2SETUP_BASE_URL=https://$SERVER_NAME/
+      - M2SETUP_ADMIN_FIRSTNAME=Admin
+      - M2SETUP_ADMIN_LASTNAME=User
+      - M2SETUP_ADMIN_EMAIL=dummy@gmail.com
+      - M2SETUP_ADMIN_USER=magento2
+      - M2SETUP_ADMIN_PASSWORD=magento2
+      - M2SETUP_VERSION=2.2.1
+      - M2SETUP_USE_SAMPLE_DATA=true
+      - M2SETUP_USE_ARCHIVE=false
+      - M2SETUP_USE_COMPOSER_ENTERPRISE=false
+  redis:
+      container_name: ${COMPOSE_PROJECT_NAME}-redis
+      image: redis
+      ports:
+          - "6379"
+  mailhog:
+      container_name: ${COMPOSE_PROJECT_NAME}-mailhog
+      image: mailhog/mailhog
+      ports:
+        - "${DOCKER_PORT_MAILHOG}:8025"
+  blackfire:
+      container_name: ${COMPOSE_PROJECT_NAME}-blackfire
+      image: blackfire/blackfire
+      environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
+
+volumes:
+  dbdata:
+    external:
+      name: ${COMPOSE_PROJECT_NAME}-dbdata
+  jetdocker-ssl-certificate:
+      external: true
+
+networks:
+    default:
+        driver: bridge

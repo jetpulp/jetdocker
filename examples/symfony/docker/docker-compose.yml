@@ -1,0 +1,88 @@
+version: "2"
+services:
+  web:
+    container_name: ${COMPOSE_PROJECT_NAME}-web
+    image: nginx
+    ports:
+        - "${DOCKER_PORT_HTTP}:80"
+        - "${DOCKER_PORT_HTTPS}:443"
+    depends_on:
+        - engine
+    volumes:
+        - "../:/var/www/html:ro"
+        - "./front/default.conf:/etc/nginx/conf.d/default.conf:ro"
+        - jetdocker-ssl-certificate:/certs
+    environment:
+        - VIRTUAL_HOST
+
+  engine:
+    container_name: ${COMPOSE_PROJECT_NAME}-engine
+    image: jetpulp/php71-fpm
+    volumes:
+        - "../:/var/www/html:rw"
+        - "./engine/php.ini:/usr/local/etc/php/conf.d/php.ini"
+        - "~/.composer:/composer"
+        - "~/.ssh:/home/www-data/.ssh"
+
+    depends_on:
+        - db
+        - redis
+        - blackfire
+    working_dir: "/var/www/html"
+    environment:
+        - SYMFONY_ENV=dev
+        - SYMFONY_DEBUG=true
+        - USER_UID
+        - USER_GROUP
+        - SERVER_NAME
+        - XDEBUG_ENABLED
+  db:
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    image: mariadb:10.0
+    ports:
+        - "${DOCKER_PORT_MYSQL}:3306"
+    volumes:
+        - ./db:/docker-entrypoint-initdb.d
+        - dbdata:/var/lib/mysql
+    environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE
+        - SERVER_NAME
+
+  redis:
+    container_name: ${COMPOSE_PROJECT_NAME}-redis
+    image: redis
+    ports:
+        - "6379"
+
+  mailhog:
+    container_name: ${COMPOSE_PROJECT_NAME}-mailhog
+    image: mailhog/mailhog
+    ports:
+        - "${DOCKER_PORT_MAILHOG}:8025"
+
+  composer:
+      image: jetpulp/php71-cli
+      user: $USER_UID:$USER_GROUP
+      volumes:
+        - "../:/app"
+        - "~/.composer:/composer"
+        - "~/.ssh:/home/www-data/.ssh"
+
+  blackfire:
+    container_name: ${COMPOSE_PROJECT_NAME}-blackfire
+    image: blackfire/blackfire
+    environment:
+        - BLACKFIRE_SERVER_ID
+        - BLACKFIRE_SERVER_TOKEN
+
+volumes:
+  dbdata:
+    external:
+      name: ${COMPOSE_PROJECT_NAME}-dbdata
+  jetdocker-ssl-certificate:
+    external: true
+
+networks:
+  default:
+    driver: bridge
