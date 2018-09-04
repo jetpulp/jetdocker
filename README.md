@@ -49,42 +49,21 @@ chmod +x /usr/local/bin/await
 
 ### Basic Installation
 
-jetdocker is installed by running one of the following commands in your terminal. You can install this via the command-line with either `curl` or `wget`.
-
-#### via curl
+jetdocker is installed by running one of the following commands in your terminal. You can install this via the command-line with `curl`.
 
 ```shell
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/coordtechjetpulp/jetdocker/master/tools/install.sh)"
 ```
 
-#### via wget
-
-```shell
-sh -c "$(wget https://raw.githubusercontent.com/coordtechjetpulp/jetdocker/master/tools/install.sh -O -)"
-```
 
 ### Basic Usage
 
 In order to use `jetdocker` in your project you need a `docker` directory, containing all the jetdocker config files.
-This is the default path must you can specify a different path with the `-c` option.
+`docker` is the default path, you can specify a different one with the `jetdocker -c configPath` option.
 
 You can find some examples of docker config directory in the `examples` directory of this repository, "ready to use" for wordpress, magento or symfony projects.
 
-The bare minimum is a `docker-compose.yml` and a `env.sh` in this directory.
-
-
-The main usage of jetdocker is to run a docker-compose config :
-
-```shell
-jetdocker up
-```
-
-See all available commands and options
-
-```shell
-jetdocker --help
-```
-#### Environnement variables in env.sh
+The bare minimum is a `docker-compose.yml` and a `env.sh` file in this directory.
 
 The env.sh file is required in order to define some environement variables on each project
 
@@ -97,18 +76,34 @@ The env.sh file is required in order to define some environement variables on ea
 * VIRTUAL_HOST : (required) list of hostnames, separated by comma
 * MYSQL_DATABASE : (optional) name of the database
 
+
+The main usage of jetdocker is to run a docker-compose config :
+
+```shell
+jetdocker up
+```
+
+See all other available commands and options
+
+```shell
+jetdocker --help
+```
+
+## commands
+
+* up : Start docker-compose after initializing context (databases, ports, proxy, etc... )
+* term : Open a shell terminal into one of docker-compose service
+* compose : Run a docker-compose command (alias for docker-compose run --rm)
+* free-disk-space :Free disk space utility
+* update : Update jetdocker to the latest version
+* search-replace-db : Run Search Replace DB in a container
+* phpmyadmin : Start/Restart a PhpMyAdmin container connecting to all running MySQL containers
+
+
 ## Getting Updates
 
 By default, an automatic update is done every day.
 
-
-### Manual Updates
-
-If you'd like to upgrade at any point in time (maybe someone just released a new command and you don't want to wait a week?) you just need to run:
-
-```shell
-jetdocker update
-```
 
 ## Contributing
 
