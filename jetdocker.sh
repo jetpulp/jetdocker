@@ -6,11 +6,28 @@
 
 VERSION=2.0.0
 
-# Need Absolute Path
-SCRIPT_ABSOLUTE_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+# Set JETDOCKER must be set during install
+if [[ -z "$JETDOCKER" ]]; then
+    echo "$(tput setaf 1) The env var JETDOCKER must be set during install on the absolute path of your install, and be accessible in your shell."
+fi
+
+# Set JETDOCKER_CUSTOM to the path where your custom lib files
+# exists, or else we will use the default custom/
+if [[ -z "$JETDOCKER_CUSTOM" ]]; then
+    JETDOCKER_CUSTOM="$JETDOCKER/custom"
+fi
+
+# Set JETDOCKER_DOMAIN_NAME to domain name you want to use for your projects
+# The default is localhost.tv (All subdomains on *.localhost.tv (except www)
+# points to 127.0.0.1 (or 0:0:0:0:0:0:0:1 for IPv6). )
+# Man can use 127.0.0.1.xip.io or anOtherIP.xip.io, see http://xip.io/
+if [[ -z "$JETDOCKER_DOMAIN_NAME" ]]; then
+    JETDOCKER_DOMAIN_NAME="localhost.tv"
+fi
+
 
 ## BOOTSTRAP ##
-source "${SCRIPT_ABSOLUTE_PATH}/lib/oo-bootstrap.sh"
+source "${JETDOCKER}/lib/oo-bootstrap.sh"
 ## MAIN ##
 import util/log util/exception util/tryCatch util/namedParameters util/class util/log UI/Color
 
@@ -43,26 +60,6 @@ projectPath=$(pwd)
 declare -A COMMANDS
 declare -A COMMANDS_USAGE
 declare -A COMMANDS_STANDALONE
-
-# Set JETDOCKER must be set during install
-if [[ -z "$JETDOCKER" ]]; then
-    JETDOCKER="$SCRIPT_ABSOLUTE_PATH"
-fi
-
-# Set JETDOCKER_CUSTOM to the path where your custom lib files
-# exists, or else we will use the default custom/
-if [[ -z "$JETDOCKER_CUSTOM" ]]; then
-    JETDOCKER_CUSTOM="$JETDOCKER/custom"
-fi
-
-# Set JETDOCKER_DOMAIN_NAME to domain name you want to use for your projects
-# The default is localhost.tv (All subdomains on *.localhost.tv (except www)
-# points to 127.0.0.1 (or 0:0:0:0:0:0:0:1 for IPv6). )
-# Man can use 127.0.0.1.xip.io or anOtherIP.xip.io, see http://xip.io/
-if [[ -z "$JETDOCKER_DOMAIN_NAME" ]]; then
-    JETDOCKER_DOMAIN_NAME="localhost.tv"
-fi
-
 
 
 #
