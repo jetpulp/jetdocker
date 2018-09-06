@@ -4,4 +4,3 @@ export JETDOCKER=$HOME/.jetdocker
 export USER_UID=1000
 # User Group
 export USER_GROUP=1000
-

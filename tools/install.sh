@@ -54,7 +54,7 @@ main() {
   if [ -d "$JETDOCKER" ]; then
     printf "${YELLOW}You already have jetdocker installed.${NORMAL}\n"
     printf "You'll need to remove $JETDOCKER if you want to re-install.\n"
-    exit
+    exit 1
   fi
 
   # Prevent the cloned repository from having insecure permissions. Failing to do
@@ -93,16 +93,19 @@ main() {
   fi
 
   printf "${BLUE}Using the jetdocker template file and adding it to ~/.jetdockerrc${NORMAL}\n"
+
   cp "${JETDOCKER}/templates/jetdockerrc" ~/.jetdockerrc
   sed "/^export JETDOCKER=/ c\\
   export JETDOCKER=\"${JETDOCKER}\"
   " ~/.jetdockerrc > ~/.jetdockerrc-temp
+  mv -f ~/.jetdockerrc-temp ~/.jetdockerrc
   sed "/^export USER_UID=/ c\\
   export USER_UID=\"$(id -u)\"
-  " ~/.jetdockerrc-temp > ~/.jetdockerrc-temp
+  " ~/.jetdockerrc > ~/.jetdockerrc-temp
+  mv -f ~/.jetdockerrc-temp ~/.jetdockerrc
   sed "/^export USER_GROUP=/ c\\
   export USER_GROUP=\"$(id -g)\"
-  " ~/.jetdockerrc-temp > ~/.jetdockerrc-temp
+  " ~/.jetdockerrc > ~/.jetdockerrc-temp
   mv -f ~/.jetdockerrc-temp ~/.jetdockerrc
 
   printf "${BLUE}Source .jetdockerrc in your shell${NORMAL}\n"

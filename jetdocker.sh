@@ -6,13 +6,14 @@
 
 VERSION=2.0.0
 
+# Need Absolute Path
+SCRIPT_ABSOLUTE_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+
 ## BOOTSTRAP ##
-source "$( cd "${BASH_SOURCE[0]%/*}" && pwd )/lib/oo-bootstrap.sh"
+source "${SCRIPT_ABSOLUTE_PATH}/lib/oo-bootstrap.sh"
 ## MAIN ##
 import util/log util/exception util/tryCatch util/namedParameters util/class util/log UI/Color
 
-# Need
-SCRIPT_ABSOLUTE_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 # Default ports for docker containers
 export DOCKER_PORT_HTTP=81
