@@ -111,7 +111,13 @@ Feel free to send PR, and open issues.
 
 ## Acknowledgement
 
+__Disclaimer:__ _Jetdocker is standing on the shoulder of giants._
 
+Thank's to
+* Docker of course
+* oh-My-ZSH for inspiration
+* https://github.com/niieani/bash-oo-framework a bash framework
+* All others ..
 
 ## Follow Us
 
