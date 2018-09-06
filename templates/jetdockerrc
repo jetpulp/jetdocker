@@ -1,20 +1,7 @@
 # Path to your jetocker installation.
 export JETDOCKER=$HOME/.jetdocker
-
-# Environnement variables for
-#export JETPULP_USERNAME=spras
-
 # User ID
 export USER_UID=1000
 # User Group
 export USER_GROUP=1000
-
-
-# Which plugins would you like to load? (plugins can be found in ~/.JETDOCKER/plugins/*)
-# Custom plugins may be added to ~/.JETDOCKER/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-#plugins=(
-#  git
-#)
 

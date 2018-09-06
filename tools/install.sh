@@ -93,9 +93,9 @@ main() {
   fi
 
   printf "${BLUE}Using the jetdocker template file and adding it to ~/.jetdockerrc${NORMAL}\n"
-  cp "$JETDOCKER"/templates/jetdockerrc ~/.jetdockerrc
+  cp "${JETDOCKER}/templates/jetdockerrc" ~/.jetdockerrc
   sed "/^export JETDOCKER=/ c\\
-  export JETDOCKER=\"$JETDOCKER\"
+  export JETDOCKER=\"${JETDOCKER}\"
   " ~/.jetdockerrc > ~/.jetdockerrc-temp
   sed "/^export USER_UID=/ c\\
   export USER_UID=\"$(id -u)\"
