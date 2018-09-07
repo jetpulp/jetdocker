@@ -8,5 +8,4 @@ cache/
 log/
 
 # cacerts directories
-cacerts
-!cacerts/.gitkeep
+cacerts/rootCA.*

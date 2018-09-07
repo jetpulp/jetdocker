@@ -233,7 +233,10 @@ Jetdocker::GenerateSSLCertificate() {
 Jetdocker::GenerateRootCACertificate() {
    Log "Jetdocker::GenerateRootCACertificate"
 
-   ## TODO : generate cacerts/rootCA.crt and cacerts/rootCA.key files
+   Log "cp ${JETDOCKER_CUSTOM}/cacerts/jetdockerRootCA.crt ${JETDOCKER}/cacerts/rootCA.crt"
+   cp "${JETDOCKER_CUSTOM}/cacerts/jetdockerRootCA.crt" "${JETDOCKER}/cacerts/rootCA.crt"
+   Log "cp ${JETDOCKER_CUSTOM}/cacerts/jetdockerRootCA.key ${JETDOCKER}/cacerts/rootCA.key"
+   cp "${JETDOCKER_CUSTOM}/cacerts/jetdockerRootCA.key" "${JETDOCKER}/cacerts/rootCA.key"
 
 }
 
