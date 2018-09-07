@@ -206,8 +206,8 @@ Up::StartReverseProxy() {
     fi
     mkdir -p $templateDir
     cat <<- EOM > $templateDir/nginx.tmpl
-ssl_certificate     /certs/my-certificate.crt;
-ssl_certificate_key /certs/my-certificate.key;
+ssl_certificate     /certs/jetdocker-ssl-certificate.crt;
+ssl_certificate_key /certs/jetdocker-ssl-certificate.key;
 proxy_connect_timeout       600;
 proxy_send_timeout          600;
 proxy_read_timeout          600;
