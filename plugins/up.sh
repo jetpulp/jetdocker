@@ -196,7 +196,7 @@ Up::StartReverseProxy() {
 
     echo "Start Nginx reverse-proxy"
     docker run -d -p 80:80 -p 443:443 --name nginx-reverse-proxy \
-        -v certificat-ssl:/certs  \
+        -v jetdocker-ssl-certificate:/certs  \
         -v /tmp/nginx:/etc/nginx/conf.d \
         -t nginx
     templateDir=/tmp/templates
