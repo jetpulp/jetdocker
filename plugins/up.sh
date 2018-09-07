@@ -154,7 +154,11 @@ Up::Install()
 install() {
     echo "$(UI.Color.Green)Installation ... $(UI.Color.Default)"
     cd "${projectPath}" || exit
-    make install
+    try {
+        make install
+    } catch {
+        Log "make install error"
+    }
     cd "$optConfigPath" || exit
     echo "$(UI.Color.Green)END Installation ... $(UI.Color.Default)"
     exit
