@@ -182,9 +182,17 @@ Up::StartReverseProxy() {
     ## pour ensuite le redémarrer systématiquement, c'est plus roboste ainsi
     for network in $(docker network ls --filter name=default -q);
     do
-        docker network disconnect --force "$network" nginx-reverse-proxy > /dev/null 2>&1
+        try {
+            docker network disconnect --force "$network" nginx-reverse-proxy > /dev/null 2>&1
+        } catch {
+            Log "docker network disconnect --force $network nginx-reverse-proxy error"
+        }
     done;
-    docker rm -f -v nginx-reverse-proxy nginx-reverse-proxy-gen > /dev/null 2>&1
+    try {
+        docker rm -f -v nginx-reverse-proxy nginx-reverse-proxy-gen > /dev/null 2>&1
+    } catch {
+        Log "docker rm -f -v nginx-reverse-proxy nginx-reverse-proxy-gen error"
+    }
 
     echo "Start Nginx reverse-proxy"
     docker run -d -p 80:80 -p 443:443 --name nginx-reverse-proxy \
