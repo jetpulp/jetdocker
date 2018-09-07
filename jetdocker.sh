@@ -297,6 +297,16 @@ Log "JETDOCKER = ${JETDOCKER}"
 Log "JETDOCKER_CUSTOM = ${JETDOCKER_CUSTOM}"
 Log "JETDOCKER_DOMAIN_NAME = ${JETDOCKER_DOMAIN_NAME}"
 
+${optVersion} && {
+  echo "Jetdocker v$VERSION"
+  exit 0
+}
+
+${optHelp} && {
+  Jetdocker::Usage
+  exit 0
+}
+
 # Load all of the config files in ~/.jetdocker/plugins and in custom/plugins that end in .sh
 pluginsFiles="$(ls $JETDOCKER_CUSTOM/jetdocker.sh 2> /dev/null) $(ls $JETDOCKER_CUSTOM/plugins/*.sh 2> /dev/null) $(ls $JETDOCKER/plugins/*.sh)"
 declare -A loadedPlugins
@@ -308,16 +318,6 @@ for pluginfile in $pluginsFiles; do
       loadedPlugins[$pluginfilename]=true;
    fi
 done
-
-${optVersion} && {
-  echo "Jetdocker v$VERSION"
-  exit 0
-}
-
-${optHelp} && {
-  Jetdocker::Usage
-  exit 0
-}
 
 #Get command, and pass command line to his function
 if [ "$1" != "" ] && [ -n "${COMMANDS[$1]}" ]; then
