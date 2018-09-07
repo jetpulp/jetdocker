@@ -109,14 +109,20 @@ By default, an automatic update is done every day.
 
 Feel free to send PR, and open issues.
 
+## Road Map
+
+* a "create" command which copy a template of docker config files
+
+
 ## Acknowledgement
 
 __Disclaimer:__ _Jetdocker is standing on the shoulder of giants._
 
 Thank's to
 * Docker of course
-* oh-My-ZSH for inspiration
-* https://github.com/niieani/bash-oo-framework a bash framework
+* [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh) for inspiration
+* [Bash OO Framework](https://github.com/niieani/bash-oo-framework)
+* [Search Replace DB](https://interconnectit.com/products/search-and-replace-for-wordpress-databases/)
 * All others ..
 
 ## Follow Us
