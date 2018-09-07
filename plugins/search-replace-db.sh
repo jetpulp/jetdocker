@@ -7,15 +7,14 @@ optFrom=production
 optTo=local
 optHelp=false
 
-namespace search-replace-db
-${DEBUG} && Log::AddOutput search-replace-db DEBUG
-
 #
 # Run the search-replace-db container configured in docker-compose.yml
 # "from" and "to" options determine the env targets,
 #
 SearchReplaceDb::Execute()
 {
+    namespace search-replace-db
+    ${DEBUG} && Log::AddOutput search-replace-db DEBUG
     Log "SearchReplaceDb::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts

@@ -5,11 +5,10 @@ COMMANDS_USAGE[2]="  compose                  Run a docker-compose command (alia
 
 optHelp=false
 
-namespace compose
-${DEBUG} && Log::AddOutput compose DEBUG
-
 Compose::Execute()
 {
+    namespace compose
+    ${DEBUG} && Log::AddOutput compose DEBUG
     Log "Compose::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts

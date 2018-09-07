@@ -6,11 +6,11 @@ COMMANDS_USAGE[1]="  term                     Open a shell terminal into one of 
 optUser=''
 optHelp=false
 
-namespace term
-${DEBUG} && Log::AddOutput term DEBUG
 
 Term::Execute()
 {
+    namespace term
+    ${DEBUG} && Log::AddOutput term DEBUG
     Log "Term::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts

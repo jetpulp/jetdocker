@@ -4,9 +4,6 @@ COMMANDS['phpmyadmin']='PhpMyAdmin::Execute' # Function name
 COMMANDS_USAGE[6]="  phpmyadmin               Start/Restart a PhpMyAdmin container connecting to all running MySQL containers"
 COMMANDS_STANDALONE['phpmyadmin']='' # Function name
 
-namespace phpmyadmin
-${DEBUG} && Log::AddOutput phpmyadmin DEBUG
-
 optHelp=false
 optPort=8888
 
@@ -16,6 +13,8 @@ optPort=8888
 #
 PhpMyAdmin::Execute()
 {
+    namespace phpmyadmin
+    ${DEBUG} && Log::AddOutput phpmyadmin DEBUG
     Log "PhpMyAdmin::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts

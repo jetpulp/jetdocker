@@ -10,11 +10,12 @@ optOpen=false
 optXdebug=false
 optHelp=false
 
-namespace up
-${DEBUG} && Log::AddOutput up DEBUG
 
 Up::Execute()
 {
+
+    namespace up
+    ${DEBUG} && Log::AddOutput up DEBUG
     Log "Up::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts

@@ -4,9 +4,6 @@ COMMANDS['free-disk-space']='FreeDiskSpace::Execute' # Function name
 COMMANDS_USAGE[3]="  free-disk-space          Free disk space utility"
 COMMANDS_STANDALONE['free-disk-space']='' # Function name
 
-namespace free-disk-space
-${DEBUG} && Log::AddOutput free-disk-space DEBUG
-
 optHelp=false
 
 #
@@ -17,6 +14,8 @@ optHelp=false
 #
 FreeDiskSpace::Execute()
 {
+    namespace free-disk-space
+    ${DEBUG} && Log::AddOutput free-disk-space DEBUG
     Log "FreeDiskSpace::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts
