@@ -83,8 +83,8 @@ main() {
   }
 
   printf "${BLUE}Add the jetdocker command to your local path ~/bin${NORMAL}\n"
-  rm ~/bin/jetdocker || true 2> /dev/null
-  ln -s ~/.jetdocker/jetdocker.sh ~/bin/jetdocker
+  sudo rm /usr/local/bin/jetdocker 2> /dev/null || true
+  ln -s ~/.jetdocker/jetdocker.sh /usr/local/bin/jetdocker
 
   printf "${BLUE}Looking for an existing jetdocker config...${NORMAL}\n"
   if [ -f ~/.jetdockerrc ] || [ -h ~/.jetdockerrc ]; then
