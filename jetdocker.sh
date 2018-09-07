@@ -255,10 +255,22 @@ Jetdocker::GeneratePseudoPasswdFile() {
     echo "$(whoami):x:$(id -u):$(id -g):,,,:/home/www-data:/bin/bash" >> ~/.composer/docker_passwd
 }
 
+# Load all of the config files in ~/.jetdocker/plugins and in custom/plugins that end in .sh
+pluginsFiles="$(ls $JETDOCKER_CUSTOM/jetdocker.sh 2> /dev/null) $(ls $JETDOCKER_CUSTOM/plugins/*.sh 2> /dev/null) $(ls $JETDOCKER/plugins/*.sh)"
+declare -A loadedPlugins
+for pluginfile in $pluginsFiles; do
+  pluginfilename=$(basename "${pluginfile}")
+  if [ ! -n "${loadedPlugins[$pluginfilename]}" ]; then
+      Log "source $pluginfile"
+      source $pluginfile
+      loadedPlugins[$pluginfilename]=true;
+   fi
+done
+
 optDebug=false
 optConfigPath=docker
 optVersion=false
-optHelp=false
+optHelpJetdocker=false
 
 # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts
 while getopts ":vhDc:-:" opt ; do
@@ -266,11 +278,11 @@ while getopts ":vhDc:-:" opt ; do
        D ) optDebug=true;;
        c ) optConfigPath=$OPTARG;;
        v ) optVersion=true;;
-       h ) optHelp=true;;
+       h ) optHelpJetdocker=true;;
        - ) case $OPTARG in
               debug ) optDebug=true;;
               config ) optConfigPathg=$2;shift;;
-              help ) optHelp=true;;
+              help ) optHelpJetdocker=true;;
               version ) optVersion;;
               * ) echo "$(UI.Color.Red)illegal option --$OPTARG"
                   Jetdocker::Usage
@@ -293,7 +305,7 @@ ${DEBUG} && docker-compose --version
 Log "optDebug = ${optDebug}"
 Log "optConfigPath = ${optConfigPath}"
 Log "optVersion = ${optVersion}"
-Log "optHelp = ${optHelp}"
+Log "optHelpJetdocker = ${optHelpJetdocker}"
 Log "JETDOCKER = ${JETDOCKER}"
 Log "JETDOCKER_CUSTOM = ${JETDOCKER_CUSTOM}"
 Log "JETDOCKER_DOMAIN_NAME = ${JETDOCKER_DOMAIN_NAME}"
@@ -303,22 +315,10 @@ ${optVersion} && {
   exit 0
 }
 
-${optHelp} && {
+${optHelpJetdocker} && {
   Jetdocker::Usage
   exit 0
 }
-
-# Load all of the config files in ~/.jetdocker/plugins and in custom/plugins that end in .sh
-pluginsFiles="$(ls $JETDOCKER_CUSTOM/jetdocker.sh 2> /dev/null) $(ls $JETDOCKER_CUSTOM/plugins/*.sh 2> /dev/null) $(ls $JETDOCKER/plugins/*.sh)"
-declare -A loadedPlugins
-for pluginfile in $pluginsFiles; do
-  pluginfilename=$(basename "${pluginfile}")
-  if [ ! -n "${loadedPlugins[$pluginfilename]}" ]; then
-      Log "source $pluginfile"
-      source $pluginfile
-      loadedPlugins[$pluginfilename]=true;
-   fi
-done
 
 #Get command, and pass command line to his function
 if [ "$1" != "" ] && [ -n "${COMMANDS[$1]}" ]; then
