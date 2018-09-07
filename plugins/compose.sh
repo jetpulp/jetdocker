@@ -59,6 +59,8 @@ Compose::Usage()
 
 Compose::InitDockerCompose()
 {
+    namespace compose
+    ${DEBUG} && Log::AddOutput compose DEBUG
     Log "Jetdocker::InitDockerCompose"
 
     if [ "$dockerComposeInitialised" = true ]; then
@@ -222,8 +224,9 @@ init-data-containers()
             echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
             try {
                 hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
-                if [ "$hasSearchReplace" -gt 0 ]; then
-                    search-replace-db
+                Log "hasSearchReplace : ${hasSearchReplace}"
+                if [ "${hasSearchReplace}" -gt 0 ]; then
+                    SearchReplaceDb::Execute
                 fi
             } catch {
                 Log "No search-replace-db configured in docker-compose.yml"
