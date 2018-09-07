@@ -106,6 +106,7 @@ Jetdocker::CheckLastExecutionOlderThanOneDay()
 
 COMMANDS['update']='Jetdocker::Update' # Function name
 COMMANDS_USAGE[4]="  update                   Update jetdocker to the latest version"
+COMMANDS_STANDALONE['update']='Jetdocker::Update' # Function name
 Jetdocker::Update()
 {
 
