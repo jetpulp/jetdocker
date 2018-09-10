@@ -127,6 +127,11 @@ Jetdocker::Update()
     echo "$(UI.Color.Default)"
     cd "$previousPath" || exit
 
+    Jetdocker::UpdateCustom
+}
+
+Jetdocker::UpdateCustom() {
+    Log "Jetdocker::UpdateCustom"
 }
 
 Jetdocker::CheckProject()
