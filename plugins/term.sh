@@ -65,16 +65,16 @@ Term::Execute()
     fi
 
     echo "Connection to $service"
-    Log "docker-compose exec $user $service bash"
+    Log "docker-compose ${dockerComposeFile} exec $user $service bash"
     try {
         docker-compose ${dockerComposeFile} exec "$user" "$service" bash 2> /tmp/jetdocker-error
     } catch {
 
         if [ "$user" == '' ]; then
 
-            Log "docker-compose run --rm $service bash"
+            Log "docker-compose ${dockerComposeFile} run --rm $service bash"
             try {
-                docker-compose run --rm "$service" bash 2> /tmp/jetdocker-error
+                docker-compose ${dockerComposeFile} run --rm "$service" bash 2> /tmp/jetdocker-error
             } catch {
                 cat /tmp/jetdocker-error
                 echo ""
