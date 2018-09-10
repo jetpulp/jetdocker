@@ -161,7 +161,6 @@ install() {
     }
     cd "$optConfigPath" || exit
     echo "$(UI.Color.Green)END Installation ... $(UI.Color.Default)"
-    exit
 }
 
 #

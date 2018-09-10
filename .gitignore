@@ -1,7 +1,6 @@
 # custom files
-custom/
-!custom/plugins/example.sh
-!custom/example.sh
+#custom/
+!custom/plugins/.gitkeep
 
 # temp files directories
 cache/

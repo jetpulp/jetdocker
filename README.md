@@ -76,6 +76,9 @@ The env.sh file is required in order to define some environement variables on ea
 * VIRTUAL_HOST : (required) list of hostnames, separated by comma
 * MYSQL_DATABASE : (optional) name of the database
 
+Usually `SERVER_NAME` is constructed based on an other env var : `JETDOCKER_DOMAIN_NAME`, jetdocker set it as default to `localhost.tv` (see http://localhost.tv), for example with `SERVER_NAME=project.$JETDOCKER_DOMAIN_NAME`, project.localhost.tv will resolve on 127.0.0.1.
+
+`JETDOCKER_DOMAIN_NAME` can be specified in `~/.jetdockerrc`, for example: `JETDOCKER_DOMAIN_NAME=192.168.0.10.xip.io`, xip.io will resolve *.192.168.0.10.xip.io on 192.168.0.10, you could then test with a mobile device on your local serveur wich is on 192.168.0.10 on your local LAN.
 
 The main usage of jetdocker is to run a docker-compose config :
 
