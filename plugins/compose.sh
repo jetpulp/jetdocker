@@ -216,11 +216,9 @@ init-data-containers()
         echo ""
         echo "$(UI.Color.Green)  Please wait ${DB_RESTORE_TIMEOUT} ... "
         echo ""
-        # shellcheck disable=SC2086
-        await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
-        awaitReturn=$?
-        endTime=$(date +%s)
-        if [ $awaitReturn -eq 0 ]; then
+        try {
+            await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+            endTime=$(date +%s)
             echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
             try {
                 hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
@@ -231,7 +229,7 @@ init-data-containers()
             } catch {
                 Log "No search-replace-db configured in docker-compose.yml"
             }
-        else
+        } catch {
             echo "$(UI.Color.Red) DATABASE RESTORATION FAILED "
             echo " Restoring since $(expr "$endTime" - "$startTime") s."
             echo " Check log with this command : docker logs ${COMPOSE_PROJECT_NAME}-db "
@@ -239,7 +237,7 @@ init-data-containers()
             echo " You can increase this timeout in env.sh DB_RESTORE_TIMEOUT parameter "
             echo " then re-run with jetdocker --delete-data up "
             exit 1;
-        fi
+        }
 
     }
 }
