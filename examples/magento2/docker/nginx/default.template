@@ -24,7 +24,6 @@ server {
     access_log  /dev/stdout combined;
     error_log  /dev/stderr;
 
-    ssl on;
     ssl_certificate         /certs/jetdocker-ssl-certificate.crt;
     ssl_certificate_key     /certs/jetdocker-ssl-certificate.key;
 
