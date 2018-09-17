@@ -77,7 +77,7 @@ main() {
       exit 1
     fi
   fi
-  env git clone https://github.com/coordtechjetpulp/jetdocker.git "$JETDOCKER" || {
+  env git clone https://github.com/jetpulp/jetdocker.git "$JETDOCKER" || {
     printf "${RED}Error: git clone of jetdocker repo failed\n"
     exit 1
   }

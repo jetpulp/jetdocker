@@ -1,7 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2018 coordtechjetpulp and contributors
-See the full list at https://github.com/coordtechjetpulp/jetdocker/contributors
+Copyright (c) 2018 jetpulp and contributors
+See the full list at https://github.com/jetpulp/jetdocker/contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
