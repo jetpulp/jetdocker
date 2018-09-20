@@ -65,7 +65,6 @@ services:
       - ./setup/mage-setup:/usr/local/bin/mage-setup
       - ..:/app
       - ~/.composer:/composer
-      - ~/.composer/docker_passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
       - ~/.ssh:/home/www-data/.ssh
       - $SSH_AUTH_SOCK:/ssh-auth.sock # Forward local machine SSH key to docker : ne fonctionne que sur les linux
