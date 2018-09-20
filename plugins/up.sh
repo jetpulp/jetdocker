@@ -217,7 +217,7 @@ server {
     listen 80 default_server;
     listen 443 ssl default_server;
     server_name _; # This is just an invalid value which will never trigger on a real hostname.
-    error_log /proc/self/fd/2;
+    error_log /proc/self/fd/2 debug;
     access_log /proc/self/fd/1;
     return 503;
 }
@@ -239,7 +239,7 @@ server {
     listen 80;
     server_name {{ \$host }};
     proxy_buffering off;
-    error_log /proc/self/fd/2;
+    error_log /proc/self/fd/2 debug;
     access_log /proc/self/fd/1;
 
     location / {
@@ -265,7 +265,7 @@ server {
     listen 443;
     server_name {{ \$host }};
     proxy_buffering off;
-    error_log /proc/self/fd/2;
+    error_log /proc/self/fd/2 debug;
     access_log /proc/self/fd/1;
 
     location / {
