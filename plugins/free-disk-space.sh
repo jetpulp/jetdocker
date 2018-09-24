@@ -2,7 +2,7 @@
 
 COMMANDS['free-disk-space']='FreeDiskSpace::Execute' # Function name
 COMMANDS_USAGE[3]="  free-disk-space          Free disk space utility"
-COMMANDS_STANDALONE['free-disk-space']='' # Function name
+COMMANDS_STANDALONE['free-disk-space']=' ' # Function name
 
 optHelp=false
 

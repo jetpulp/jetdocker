@@ -39,7 +39,11 @@ Compose::Execute()
 
     Compose::InitDockerCompose
 
-    docker-compose ${dockerComposeFile} "$@"
+    try {
+        docker-compose ${dockerComposeFile} "$@"
+    } catch {
+        Log "docker-compose ${dockerComposeFile} "$@" stopped"
+    }
 
 }
 
