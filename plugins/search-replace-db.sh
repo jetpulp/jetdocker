@@ -50,8 +50,8 @@ SearchReplaceDb::Execute()
 
     Compose::InitDockerCompose
 
-    ${DEBUG} && echo "docker-compose ${dockerComposeVerboseOption} run --rm search-replace-db php srdb.bulk.php --from $optFrom --to $optTo"
-    docker-compose ${dockerComposeVerboseOption} run --rm search-replace-db php srdb.bulk.php --from "$optFrom" --to "$optTo"
+    ${DEBUG} && echo "docker-compose run --rm search-replace-db php srdb.bulk.php --from $optFrom --to $optTo"
+    docker-compose run --rm search-replace-db php srdb.bulk.php --from "$optFrom" --to "$optTo"
 
 }
 

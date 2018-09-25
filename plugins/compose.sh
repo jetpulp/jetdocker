@@ -72,6 +72,14 @@ Compose::InitDockerCompose()
         return;
     fi
 
+    # MacOSX : add specific compose config file
+    if [ "$OSTYPE" != 'linux-gnu' ]; then
+        if [ -f "docker-compose-osx.yml" ]; then
+            Log "Docker4Mac use docker-compose-osx.yml configuration file"
+            dockerComposeFile="-f docker-compose.yml -f docker-compose-osx.yml"
+        fi
+    fi
+
     Compose::CheckOpenPorts
 
     if [ "$optDelete" = true ]; then
@@ -83,20 +91,12 @@ Compose::InitDockerCompose()
     # Initialise data containers
     Compose::InitDataVolumes
 
-    # MacOSX : add specific compose config file
-    if [ "$OSTYPE" != 'linux-gnu' ]; then
-        if [ -f "docker-compose-osx.yml" ]; then
-            Log "Docker4Mac use docker-compose-osx.yml configuration file"
-            dockerComposeFile="-f docker-compose.yml -f docker-compose-osx.yml"
-        fi
-    fi
-
     # Pull images from docker-compose config every day
     if [ "$(Jetdocker::CheckLastExecutionOlderThanOneDay  "-${COMPOSE_PROJECT_NAME}")" == "true" ]; then
         Log "Force optBuild to true because it's the first run of day"
         optBuild=true
-        Log "docker-compose ${dockerComposeVerboseOption} pull --ignore-pull-failures"
-        docker-compose ${dockerComposeVerboseOption} pull --ignore-pull-failures
+        Log "docker-compose ${dockerComposeFile} pull --ignore-pull-failures"
+        docker-compose ${dockerComposeFile} pull --ignore-pull-failures
     fi
     dockerComposeInitialised=true
 
@@ -207,7 +207,7 @@ init-data-containers()
         Compose::InitExtraDataVolumes
 
         # shellcheck disable=SC2086
-        docker-compose ${dockerComposeVerboseOption} up -d db
+        docker-compose ${dockerComposeFile} up -d db
         echo "Restoring Database ......... "
         echo ""
         startTime=$(date +%s)

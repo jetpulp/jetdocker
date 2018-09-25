@@ -76,14 +76,16 @@ Up::Execute()
       Up::Install
    fi
 
+   # Run Compose::CheckOpenPorts again in case ports have been used during Compose::InitDataVolumes or Up::Install
+   Compose::CheckOpenPorts
+
    ${DEBUG} && docker-compose config
-   echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} ${dockerComposeVerboseOption} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
-   docker-compose ${dockerComposeFile} ${dockerComposeVerboseOption} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
+   echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
+   docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
 
    Up::StartReverseProxy
 
    # connect the container nginx-reverse-proxy to the network of the project (required to communicate)
-   message=""
    try {
     Log "docker network connect ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy"
     docker network connect "${COMPOSE_PROJECT_NAME}_default" nginx-reverse-proxy > /tmp/jetdocker-error 2>&1
