@@ -166,9 +166,10 @@ delete-data-volumes()
         } catch {
             Log "No ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data volume to delete"
         }
-        Compose::DeleteExtraDataVolumes
 
     fi
+    Compose::DeleteExtraDataVolumes
+
 }
 
 #
@@ -196,15 +197,15 @@ Compose::InitDataVolumes()
 }
 init-data-containers()
 {
+    # run init-extra-data-containers before compose up because it can need volumes created in init-extra-data-containers
+    Compose::InitExtraDataVolumes
+
     # Database data volume :
     try {
         docker volume inspect "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
     } catch {
         docker volume create --name "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
         DatabaseBackup::Fetch
-
-        # run init-extra-data-containers before compose up because it can need volumes created in init-extra-data-containers
-        Compose::InitExtraDataVolumes
 
         # shellcheck disable=SC2086
         docker-compose ${dockerComposeFile} up -d db
@@ -248,7 +249,7 @@ init-data-containers()
 
 Compose::InitExtraDataVolumes()
 {
-    Log "Compose::InitDataVolumes"
+    Log "Compose::InitExtraDataVolumes"
     init-extra-data-containers # To avoid BC Break, we keep old function name
 }
 init-extra-data-containers()
