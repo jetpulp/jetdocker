@@ -46,8 +46,12 @@ Term::Execute()
 
     if [ -z "${*:-}" ]; then
         if [ -z "${JETDOCKER_TERM_DEFAULT_SERVICE:-}" ]; then
-            services=$(compose config --services | tr '\n' ', ')
-            echo "Which service do you want to connect to ? ($services)"
+            try {
+                docker-compose ${dockerComposeFile} config --services | tr '\n' ', ' > /tmp/jetdocker_services
+            } catch {
+                Log "docker-compose ${dockerComposeFile} "$@" stopped"
+            }
+            echo "Which service do you want to connect to ? ($(cat /tmp/jetdocker_services))"
             read -r service
         else
             service="${JETDOCKER_TERM_DEFAULT_SERVICE}"
