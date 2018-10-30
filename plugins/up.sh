@@ -308,6 +308,8 @@ Up::Stop()
     try {
         docker-compose stop
         docker-compose rm -f -v
+        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
+        docker network rm ${COMPOSE_PROJECT_NAME}_default
     } catch {
         Log 'End'
     }
