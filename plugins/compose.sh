@@ -236,6 +236,7 @@ init-data-containers()
             }
         } catch {
             echo "$(UI.Color.Red) DATABASE RESTORATION FAILED "
+            endTime=$(date +%s)
             echo " Restoring since $(expr "$endTime" - "$startTime") s."
             echo " Check log with this command : docker logs ${COMPOSE_PROJECT_NAME}-db "
             echo " The database dump might be to big for beeing restaured in less than the ${DB_RESTORE_TIMEOUT} await timeout "
