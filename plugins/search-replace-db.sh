@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['search-replace-db']='SearchReplaceDb::Execute' # Function name
-COMMANDS_USAGE[5]="  search-replace-db        Run Search Replace DB in a container"
+COMMANDS_USAGE['30']="  search-replace-db        Run Search Replace DB in a container"
 
 optFrom=production
 optTo=local

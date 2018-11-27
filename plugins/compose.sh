@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['compose']='Compose::Execute' # Function name
-COMMANDS_USAGE[2]="  compose                  Run a docker-compose command (alias for docker-compose run --rm)"
+COMMANDS_USAGE['10']="  compose                  Run a docker-compose command (alias for docker-compose run --rm)"
 
 optHelp=false
 

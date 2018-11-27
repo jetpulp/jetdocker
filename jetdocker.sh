@@ -78,7 +78,14 @@ Jetdocker::Usage()
   echo "  -v, --version            Print version information and quit"
   echo ""
   echo "$(UI.Color.Yellow)Commands:$(UI.Color.Default)"
-  for command in "${!COMMANDS_USAGE[@]}"
+
+  COMMANDS_ORDERED=( $(
+    for el in "${!COMMANDS_USAGE[@]}"
+    do
+        echo "$el"
+    done | sort) )
+
+  for command in "${COMMANDS_ORDERED[@]}"
   do
     echo "${COMMANDS_USAGE[$command]}"
   done
@@ -105,7 +112,7 @@ Jetdocker::CheckLastExecutionOlderThanOneDay()
 }
 
 COMMANDS['update']='Jetdocker::Update' # Function name
-COMMANDS_USAGE[4]="  update                   Update jetdocker to the latest version"
+COMMANDS_USAGE['20']="  update                   Update jetdocker to the latest version"
 COMMANDS_STANDALONE['update']='Jetdocker::Update' # Function name
 Jetdocker::Update()
 {

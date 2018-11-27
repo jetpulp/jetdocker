@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['phpmyadmin']='PhpMyAdmin::Execute' # Function name
-COMMANDS_USAGE[6]="  phpmyadmin               Start/Restart a PhpMyAdmin container connecting to all running MySQL containers"
+COMMANDS_USAGE['25']="  phpmyadmin               Start/Restart a PhpMyAdmin container connecting to all running MySQL containers"
 COMMANDS_STANDALONE['phpmyadmin']=' ' # Function name
 
 optHelp=false

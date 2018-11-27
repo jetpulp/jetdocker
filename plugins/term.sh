@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['term']='Term::Execute' # Function name
-COMMANDS_USAGE[1]="  term                     Open a shell terminal into one of docker-compose service"
+COMMANDS_USAGE['05']="  term                     Open a shell terminal into one of docker-compose service"
 
 optUser=''
 optHelp=false

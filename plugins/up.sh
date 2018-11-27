@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['up']='Up::Execute' # Function name
-COMMANDS_USAGE[0]="  up                       Start docker-compose after initializing context (databases, ports, proxy, etc... )"
+COMMANDS_USAGE['00']="  up                       Start docker-compose after initializing context (databases, ports, proxy, etc... )"
 
 optDelete=false
 optBuild=false
