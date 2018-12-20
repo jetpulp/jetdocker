@@ -80,6 +80,8 @@ Compose::InitDockerCompose()
         fi
     fi
 
+    Compose::StartMailhog
+
     Compose::CheckOpenPorts
 
     if [ "$optDelete" = true ]; then
@@ -256,4 +258,12 @@ Compose::InitExtraDataVolumes()
 init-extra-data-containers()
 {
     Log "No extra data container to create"
+}
+
+#
+# Start mailhog container on mailhog_default docker network
+#
+Compose::StartMailhog()
+{
+    docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose-mailhog.yml" up -d
 }
