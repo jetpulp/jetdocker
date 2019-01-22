@@ -114,6 +114,8 @@ Up::Execute()
         fi
     fi
 
+    Up::Message
+
     if [ "$optSilent" = false ]; then
         # log in standard output
         try {
@@ -313,4 +315,9 @@ Up::Stop()
     } catch {
         Log 'End'
     }
+}
+
+Up::Message()
+{
+    Log "Up::Message : override function in env.sh to display custom message to the developper"
 }
