@@ -24,7 +24,6 @@ services:
 
         depends_on:
             - db
-            - mailhog
             - blackfire
         working_dir: "/var/www/html"
         environment:
@@ -33,6 +32,9 @@ services:
             - SERVER_NAME
             - SERVER_NAME_ALIAS
             - XDEBUG_ENABLED
+        networks:
+            - default
+            - mailhog_default
     db:
         container_name: ${COMPOSE_PROJECT_NAME}-db
         image: mariadb:10.0
@@ -44,11 +46,6 @@ services:
         environment:
             - MYSQL_ROOT_PASSWORD=root
             - MYSQL_DATABASE
-    mailhog:
-        container_name: ${COMPOSE_PROJECT_NAME}-mailhog
-        image: mailhog/mailhog
-        ports:
-            - "${DOCKER_PORT_MAILHOG}:8025"
     blackfire:
       container_name: ${COMPOSE_PROJECT_NAME}-blackfire
       image: blackfire/blackfire
@@ -79,3 +76,6 @@ volumes:
 networks:
     default:
         driver: bridge
+    mailhog_default:
+        external:
+            name: mailhog_default

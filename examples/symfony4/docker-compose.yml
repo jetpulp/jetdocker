@@ -23,10 +23,8 @@ services:
         - "./engine/php.ini:/usr/local/etc/php/conf.d/php.ini"
         - "~/.composer:/composer"
         - "~/.ssh:/home/www-data/.ssh"
-
     depends_on:
         - db
-        - mailhog
         - redis
         - blackfire
     working_dir: "/var/www/html"
@@ -37,6 +35,9 @@ services:
         - USER_GROUP
         - SERVER_NAME
         - XDEBUG_ENABLED
+    networks:
+      - default
+      - mailhog_default
   db:
     container_name: ${COMPOSE_PROJECT_NAME}-db
     image: mariadb:10.0
@@ -55,12 +56,6 @@ services:
     image: redis
     ports:
         - "6379"
-
-  mailhog:
-    container_name: ${COMPOSE_PROJECT_NAME}-mailhog
-    image: mailhog/mailhog
-    ports:
-        - "${DOCKER_PORT_MAILHOG}:8025"
 
   composer:
       image: jetpulp/php72-cli
@@ -87,3 +82,6 @@ volumes:
 networks:
   default:
     driver: bridge
+  mailhog_default:
+    external:
+      name: mailhog_default
