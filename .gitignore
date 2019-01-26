@@ -8,3 +8,7 @@ log/
 
 # cacerts directories
 cacerts/rootCA.*
+
+#
+.bash_history
+.my_aliases

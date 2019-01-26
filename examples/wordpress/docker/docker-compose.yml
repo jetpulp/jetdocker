@@ -21,6 +21,7 @@ services:
         volumes:
             - ../server:/var/www/html
             - ./engine/php.ini:/usr/local/etc/php/conf.d/php.ini
+            - "$JETDOCKER/bash_home:/home/www-data/"
 
         depends_on:
             - db

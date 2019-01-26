@@ -23,6 +23,7 @@ services:
         - "./engine/php.ini:/usr/local/etc/php/conf.d/php.ini"
         - "~/.composer:/composer"
         - "~/.ssh:/home/www-data/.ssh"
+        - "$JETDOCKER/bash_home:/home/www-data/"
     networks:
       - default
       - mailhog_default
@@ -64,6 +65,7 @@ services:
         - "../:/app"
         - "~/.composer:/composer"
         - "~/.ssh:/home/www-data/.ssh"
+        - "$JETDOCKER/bash_home:/home/www-data/"
 
   blackfire:
     container_name: ${COMPOSE_PROJECT_NAME}-blackfire

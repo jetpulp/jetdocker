@@ -30,6 +30,7 @@ services:
         - "..:/var/www/html"
         - ~/.composer:/composer
         - ~/.ssh:/home/www-data/.ssh
+        - "$JETDOCKER/bash_home:/home/www-data/"
     environment:
         - USER_UID
         - USER_GROUP
