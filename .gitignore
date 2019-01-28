@@ -10,5 +10,5 @@ log/
 cacerts/rootCA.*
 
 #
-.bash_history
-.my_aliases
+bash_home/.bash_history
+bash_home/.my_aliases

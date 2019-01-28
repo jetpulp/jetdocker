@@ -261,9 +261,9 @@ init-extra-data-containers()
 }
 
 #
-# Start mailhog container on mailhog_default docker network
+# Start mailhog container on jetdocker_default docker network
 #
 Compose::StartMailhog()
 {
-    docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose-mailhog.yml" up -d
+    docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose.yml" up -d
 }

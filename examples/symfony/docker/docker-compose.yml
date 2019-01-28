@@ -26,7 +26,7 @@ services:
         - "$JETDOCKER/bash_home:/home/www-data/"
     networks:
       - default
-      - mailhog_default
+      - jetdocker_default
     depends_on:
         - db
         - redis
@@ -84,6 +84,6 @@ volumes:
 networks:
   default:
     driver: bridge
-  mailhog_default:
+  jetdocker_default:
     external:
-          name: mailhog_default
+          name: jetdocker_default

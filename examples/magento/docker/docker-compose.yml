@@ -27,7 +27,7 @@ services:
             - blackfire
         networks:
             - default
-            - mailhog_default
+            - jetdocker_default
     db:
         container_name: ${COMPOSE_PROJECT_NAME}-db
         image: mariadb:10.0
@@ -60,6 +60,6 @@ volumes:
 networks:
     default:
         driver: bridge
-    mailhog_default:
+    jetdocker_default:
         external:
-            name: mailhog_default
+            name: jetdocker_default
