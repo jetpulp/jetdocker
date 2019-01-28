@@ -79,6 +79,8 @@ Up::Execute()
    # Run Compose::CheckOpenPorts again in case ports have been used during Compose::InitDataVolumes or Up::Install
    Compose::CheckOpenPorts
 
+   Up::StartReverseProxy
+
    # create file bash_home/.bash_history if it doesn't exists
    touch "${JETDOCKER}/bash_home/.bash_history"
    touch "${JETDOCKER}/bash_home/.my_aliases"
@@ -86,8 +88,6 @@ Up::Execute()
    ${DEBUG} && docker-compose config
    echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
    docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
-
-   Up::StartReverseProxy
 
    # connect the container nginx-reverse-proxy to the network of the project (required to communicate)
    try {
@@ -172,141 +172,19 @@ install() {
 }
 
 #
-# Start docker reverse proxy, if not already running :
-#  container nginx-reverse-proxy listen ports 80 and 443 and proxies requests to corresponding containers
-#  container nginx-reverse-proxy-gen listen containers start and stop and auto-configure nginx in nginx-reverse-proxy
+# Start docker-compose with traefik, mailhog and phpmyadmin
 #
-# see https://github.com/jwilder/docker-gen
-#     http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/
-# Template is based on https://golang.org/pkg/text/template/
-#
-# Add proxies to 8443 ports for java tomcat applications
+# TODO : voir comment fair ça avec traefik : Add proxies to 8443 ports for java tomcat applications
 #
 Up::StartReverseProxy() {
 
     Log "Up::StartReverseProxy"
-    ## On force la déconnection aux réseau puis la suppression des containers nginx
-    ## pour ensuite le redémarrer systématiquement, c'est plus roboste ainsi
-    for network in $(docker network ls --filter name=default -q);
-    do
-        try {
-            docker network disconnect --force "$network" nginx-reverse-proxy > /dev/null 2>&1
-        } catch {
-            Log "docker network disconnect --force $network nginx-reverse-proxy error"
-        }
-    done;
     try {
-        docker rm -f -v nginx-reverse-proxy nginx-reverse-proxy-gen > /dev/null 2>&1
+        docker inspect mailhog > /dev/null 2>&1
     } catch {
-        Log "docker rm -f -v nginx-reverse-proxy nginx-reverse-proxy-gen error"
+        touch "$JETDOCKER/templates/config.user.inc.php"
+        docker-compose --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
     }
-
-    echo "Start Nginx reverse-proxy"
-    docker run -d -p 80:80 -p 443:443 --name nginx-reverse-proxy \
-        -v jetdocker-ssl-certificate:/certs  \
-        -v /tmp/nginx:/etc/nginx/conf.d \
-        -t nginx
-    templateDir=/tmp/templates
-    if [ "$OSTYPE" != 'linux-gnu' ]
-    then
-        templateDir=~/tmp/templates
-    fi
-    mkdir -p $templateDir
-    cat <<- EOM > $templateDir/nginx.tmpl
-ssl_certificate     /certs/jetdocker-ssl-certificate.crt;
-ssl_certificate_key /certs/jetdocker-ssl-certificate.key;
-proxy_connect_timeout       600;
-proxy_send_timeout          600;
-proxy_read_timeout          600;
-send_timeout                600;
-server_names_hash_bucket_size  64;
-client_max_body_size        100m;
-server {
-    listen 80 default_server;
-    listen 443 ssl default_server;
-    server_name _; # This is just an invalid value which will never trigger on a real hostname.
-    error_log /proc/self/fd/2 debug;
-    access_log /proc/self/fd/1;
-    return 503;
-}
-
-{{ range \$host, \$containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
-
-{{ range \$index, \$value := \$containers }}
-
-	{{ \$addrLen := len \$value.Addresses }}
-	{{ \$network := index \$value.Networks 0 }}
-    {{ range \$i, \$address := \$value.Addresses }}
-    {{ if eq \$address.Port "80" }}
-upstream {{ \$host }} {
-        # {{\$value.Name}}
-        server {{ \$network.IP }}:{{ \$address.Port }};
-}
-server {
-    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-    listen 80;
-    server_name {{ \$host }};
-    proxy_buffering off;
-    error_log /proc/self/fd/2 debug;
-    access_log /proc/self/fd/1;
-
-    location / {
-        proxy_pass http://{{ trim \$host }};
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-
-        # HTTP 1.1 support
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-    }
-}
-    {{ end }}
-    {{ if eq \$address.Port "443" "8443" }}
-upstream {{ \$host }}-ssl {
-        # {{\$value.Name}}
-        server {{ \$network.IP }}:{{ \$address.Port }};
-}
-server {
-    gzip_types text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
-    listen 443;
-    server_name {{ \$host }};
-    proxy_buffering off;
-    error_log /proc/self/fd/2 debug;
-    access_log /proc/self/fd/1;
-
-    location / {
-        proxy_pass https://{{ trim \$host }}-ssl;
-        proxy_set_header Host \$http_host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-
-        # HTTP 1.1 support
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-    }
-}
-    {{ end }}
-    {{ end }}
-{{ end }}
-{{ end }}
-EOM
-    echo "Start Nginx reverse-proxy config generator"
-    docker run -d --name nginx-reverse-proxy-gen \
-        --volumes-from nginx-reverse-proxy \
-        -v /var/run/docker.sock:/tmp/docker.sock:ro \
-        -v $templateDir:/etc/docker-gen/templates \
-        -t jwilder/docker-gen \
-        -notify-sighup nginx-reverse-proxy -watch -only-exposed \
-        /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
-
-    for network in $(docker network ls --filter name=default -q);
-    do
-        docker network connect "$network" nginx-reverse-proxy 2> /dev/null
-    done;
-
 }
 
 Up::Stop()
@@ -314,7 +192,6 @@ Up::Stop()
     try {
         docker-compose stop
         docker-compose rm -f -v
-        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
         docker network rm ${COMPOSE_PROJECT_NAME}_default
     } catch {
         Log 'End'

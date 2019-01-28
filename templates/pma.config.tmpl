@@ -1,0 +1,18 @@
+<?php
+$cfg['NavigationDisplayServers']=true;
+$i=1;
+{{ range $containers := groupBy $ "Env.MYSQL_DATABASE" }}
+{{ range $index, $value := $containers }}
+{{ range $index, $network := $value.Networks }}
+{{ if eq $network.Name "jetdocker_default" }}
+$i++;
+$cfg['Servers'][$i]['host']='{{ $network.IP }}';
+$cfg['Servers'][$i]['verbose']='{{$value.Name}}';
+$cfg['Servers'][$i]['network']='{{$network.Name}}';
+$cfg['Servers'][$i]['auth_type']='config';
+$cfg['Servers'][$i]['user']='root';
+$cfg['Servers'][$i]['password']='root';
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}

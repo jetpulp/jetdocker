@@ -1,7 +1,46 @@
-version: "2"
+version: '3'
+
 services:
+  reverse-proxy:
+    container_name: reverse-proxy
+    image: traefik # The official Traefik docker image
+    command: --api --docker # Enables the web UI and tells Traefik to listen to docker
+    ports:
+      - "80:80"     # The HTTP port
+      - "443:443"   # The HTTPS port
+      - "8080:8080" # The Web UI (enabled by --api)
+    volumes:
+      - $JETDOCKER/traefik.toml:/etc/traefik/traefik.toml
+      - jetdocker-ssl-certificate:/certs
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
   mailhog:
     container_name: mailhog
     image: mailhog/mailhog
-    ports:
-        - "8025:8025"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:mailhog.$JETDOCKER_DOMAIN_NAME"
+      - "traefik.port=8025"
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    volumes:
+      - ./templates/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
+    environment:
+      - PMA_ABSOLUTE_URI=https://pma."$JETDOCKER_DOMAIN_NAME"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.frontend.rule=Host:pma.$JETDOCKER_DOMAIN_NAME"
+      - "traefik.port=80"
+    depends_on:
+      - phpmyadmin-gen
+  phpmyadmin-gen:
+    container_name: phpmyadmin-gen
+    image: jwilder/docker-gen
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./templates/pma.config.tmpl:/etc/docker-gen/templates/pma.config.tmpl
+      - ./templates:/etc/phpmyadmin/
+    command: -watch /etc/docker-gen/templates/pma.config.tmpl /etc/phpmyadmin/config.user.inc.php
+volumes:
+  jetdocker-ssl-certificate:
+    external: true
