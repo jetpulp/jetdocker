@@ -10,5 +10,6 @@ log/
 cacerts/rootCA.*
 
 #
+bash_home/.ssh
 bash_home/.bash_history
 bash_home/.my_aliases
