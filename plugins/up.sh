@@ -81,6 +81,7 @@ Up::Execute()
 
    # create file bash_home/.bash_history if it doesn't exists
    touch "${JETDOCKER}/bash_home/.bash_history"
+   touch "${JETDOCKER}/bash_home/.my_aliases"
 
    ${DEBUG} && docker-compose config
    echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
