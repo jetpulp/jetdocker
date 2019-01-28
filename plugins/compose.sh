@@ -265,5 +265,9 @@ init-extra-data-containers()
 #
 Compose::StartMailhog()
 {
-    docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose.yml" up -d
+    try {
+        docker inspect mailhog > /dev/null 2>&1
+    } catch {
+        docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose.yml" up -d
+    }
 }
