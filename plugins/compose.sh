@@ -268,6 +268,6 @@ Compose::StartMailhog()
     try {
         docker inspect mailhog > /dev/null 2>&1
     } catch {
-        docker-compose --project-name=mailhog -f "$JETDOCKER/docker-compose.yml" up -d
+        docker-compose --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
     }
 }
