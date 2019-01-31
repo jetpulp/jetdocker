@@ -8,6 +8,7 @@ optBuild=false
 optSilent=false
 optOpen=false
 optXdebug=false
+optTunnel=true
 optHelp=false
 
 
@@ -20,13 +21,14 @@ Up::Execute()
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts
     local OPTIND opt
-    while getopts ":dbsoxh-:" opt ; do
+    while getopts ":dbsoxth-:" opt ; do
        case $opt in
            d ) optDelete=true;;
            b ) optBuild=true;;
            s ) optSilent=true;;
            o ) optOpen=true;;
            x ) optXdebug=true;;
+           t ) optTunnel=true;;
            h ) optHelp=true;;
            - ) case $OPTARG in
                   delete-data ) optDelete=true;;
@@ -34,6 +36,7 @@ Up::Execute()
                   build ) optBuild=true;;
                   silent ) optSilent=true;;
                   open ) optOpen=true;;
+                  tunnel ) optTunnel=true;;
                   help ) Up::Usage
                          exit 0;;
                   * ) echo "illegal option --$OPTARG"
@@ -51,6 +54,7 @@ Up::Execute()
     Log "optBuild = ${optBuild}"
     Log "optSilent = ${optSilent}"
     Log "optOpen = ${optOpen}"
+    Log "optTunnel = ${optTunnel}"
     Log "optXdebug = ${optXdebug}"
     Log "optHelp = ${optHelp}"
 
@@ -118,6 +122,8 @@ Up::Execute()
         fi
     fi
 
+    Up::Tunnel
+
     Up::Message
 
     if [ "$optSilent" = false ]; then
@@ -144,6 +150,7 @@ Up::Usage()
   echo "  -x, --xdebug             Enable xdebug in PHP container"
   echo "  -s, --silent             Don't run docker-compose log --follow after start"
   echo "  -o, --open               Open browser after start on the $SERVER_NAME url"
+  echo "  -t, --tunnel             Start an ssh tunnel, to expose localhost on the internet"
   echo "  -h, --help               Print help information and quit"
   echo ""
   echo "Start docker-compose after initializing context (databases, ports, proxy, etc... )"
@@ -328,4 +335,25 @@ Up::Stop()
 Up::Message()
 {
     Log "Up::Message : override function in env.sh to display custom message to the developper"
+}
+
+Up::Tunnel()
+{
+    Log "Up::Tunnel : open ssh tunnel : $optTunnel"
+
+    if [ "$optTunnel" = true ]; then
+      Log "run ngrok in background"
+      Log "ngrok http -region eu --host-header ${SERVER_NAME} ${DOCKER_PORT_HTTP} &"
+      ngrok http -region eu --host-header ${SERVER_NAME} ${DOCKER_PORT_HTTP} &
+      echo ""
+      echo "$(UI.Color.Green)Tunnel SSH lancé $(UI.Color.Default)"
+      echo ""
+      NGROK_URL="http://127.0.0.1:4040/"
+      if [ "$OSTYPE" != 'linux-gnu' ]; then
+        open "$NGROK_URL"
+      else
+        xdg-open "$NGROK_URL"
+      fi
+    fi
+
 }
