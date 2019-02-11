@@ -164,7 +164,7 @@ Up::Install()
     } catch {
         Log "make install error"
         echo ""
-        echo "$(UI.Color.Red)Install error : please fix the build and re-run $(UI.Color.Blue)jetdcocker up -b$(UI.Color.Red) (option -b will force to re-build)$(UI.Color.Default)"
+        echo "$(UI.Color.Red)Install error : please fix the build and re-run $(UI.Color.Blue)jetdocker up -b$(UI.Color.Red) (option -b will force to re-build)$(UI.Color.Default)"
         echo ""
         exit 1
     }
