@@ -34,8 +34,8 @@ main() {
     }
   done
 
-  bash --version | grep "version 4\." >/dev/null 2>&1  || {
-      echo "${RED}Error: bash 4 is not installed"
+  bash --version | grep "version 4\." >/dev/null 2>&1  || bash --version | grep "version 5\." >/dev/null 2>&1  || {
+      echo "${RED}Error: bash 4 or 5 is not installed"
       if [ "$OSTYPE" != 'linux-gnu' ]; then
           echo ""
           echo "On mac OSX you can install it, run :"
