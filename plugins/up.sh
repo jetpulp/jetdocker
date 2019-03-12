@@ -91,12 +91,6 @@ Up::Execute()
 
    # connect the container nginx-reverse-proxy to the network of the project (required to communicate)
    try {
-    Log "docker network connect ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy"
-    docker network connect "${COMPOSE_PROJECT_NAME}_default" nginx-reverse-proxy > /tmp/jetdocker-error 2>&1
-   } catch {
-     Log $(cat /tmp/jetdocker-error)
-   }
-   try {
     Log "docker network connect bridge ${COMPOSE_PROJECT_NAME}-${JETDOCKER_UP_DEFAULT_SERVICE}"
     docker network connect bridge "${COMPOSE_PROJECT_NAME}-${JETDOCKER_UP_DEFAULT_SERVICE}" > /tmp/jetdocker-error 2>&1
    } catch {
@@ -189,8 +183,8 @@ install() {
 Up::StartReverseProxy() {
 
     Log "Up::StartReverseProxy"
-    ## On force la déconnection aux réseau puis la suppression des containers nginx
-    ## pour ensuite le redémarrer systématiquement, c'est plus roboste ainsi
+    ## On force la déconnection aux réseaux puis la suppression des containers nginx
+    ## pour ensuite le redémarrer systématiquement, c'est plus roboste ainsi ...
     for network in $(docker network ls --filter name=default -q);
     do
         try {
@@ -306,9 +300,18 @@ EOM
         -notify-sighup nginx-reverse-proxy -watch -only-exposed \
         /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
 
+    # connect the container nginx-reverse-proxy to the network of the project (required to communicate with)
+    # loop because, we need to connect nginx-reverse-proxy to other "default" network (other instances of running jetdocker)
+    # --alias : this allow to resolve $SERVER_NAME from containers to nginx-reverse-proxy (useful when get http from container)
+    # TOFIX : on other running instance, the --alias may resolve the wrong $SERVER_NAME ...
     for network in $(docker network ls --filter name=default -q);
     do
-        docker network connect "$network" nginx-reverse-proxy 2> /dev/null
+        try {
+            Log "docker network connect --alias ${SERVER_NAME} $network nginx-reverse-proxy"
+            docker network connect --alias "${SERVER_NAME}" "$network" nginx-reverse-proxy > /tmp/jetdocker-error 2>&1
+         } catch {
+            Log $(cat /tmp/jetdocker-error)
+         }
     done;
 
 }
