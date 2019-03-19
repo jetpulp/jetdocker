@@ -69,7 +69,7 @@ FreeDiskSpace::Execute()
     echo "WARNING! This will remove all volume not used by at least one container, except the \"data\" ones."
     echo -n "Are you sure you want to continue? [y/N] "
     read -r yes
-    if [ "$yes" = 'y' ]; then
+    if [[ "$yes" = 'y' || "$yes" = 'yes' ]]; then
         try {
         #docker volume prune ==> Remove all unused volumes , even data ones ... not what we want !!
         comm -13 <(docker volume ls -f name=data --format "{{.Name}}" | sort) <(docker volume ls -f dangling=true --format "{{.Name}}" | sort) | ${xargscommand} docker volume rm
@@ -88,7 +88,7 @@ FreeDiskSpace::Execute()
     echo "WARNING! This will remove all images non tagged versions"
     echo -n "Are you sure you want to continue? [y/N] "
     read -r yes
-    if [ "$yes" = 'y' ]; then
+    if [[ "$yes" = 'y' || "$yes" = 'yes' ]]; then
         try {
             docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | "${xargscommand}" docker rmi
         } catch {

@@ -152,7 +152,7 @@ delete-data-volumes()
 {
     echo "$(UI.Color.Red)Do you really want to delete your data volumes? (y/n)$(UI.Color.Default)"
     read -r yes
-    if [ "$yes" = 'y' ]; then
+    if [[ "$yes" = 'y' || "$yes" = 'yes' ]]; then
 
         # remove db container in case he's only stopped
         try {
