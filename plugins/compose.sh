@@ -265,8 +265,9 @@ init-extra-data-containers()
 #
 Compose::StartMailhog()
 {
+    Log "Compose::StartMailhog"
     try {
-        docker inspect mailhog > /dev/null 2>&1
+        docker inspect mailhog | grep Status | grep running > /dev/null 2>&1
     } catch {
         docker-compose --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
     }
