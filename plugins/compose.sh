@@ -269,6 +269,7 @@ Compose::StartMailhog()
     try {
         docker inspect mailhog | grep Status | grep running > /dev/null 2>&1
     } catch {
+        docker rm -f mailhog > /dev/null 2>&1
         docker-compose --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
     }
 }
