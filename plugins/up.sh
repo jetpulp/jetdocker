@@ -83,7 +83,7 @@ Up::Execute()
    touch "${JETDOCKER}/bash_home/.bash_history"
    touch "${JETDOCKER}/bash_home/.my_aliases"
 
-   ${DEBUG} && docker-compose config
+   ${DEBUG} && docker-compose ${dockerComposeFile} config
    echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
    docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
 
