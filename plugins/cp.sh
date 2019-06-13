@@ -53,8 +53,11 @@ Cp::Execute()
 
     path="${1}"
     echo "docker cp  $COMPOSE_PROJECT_NAME-$service:/var/www/html/$path/. ../$path"
-    docker cp $COMPOSE_PROJECT_NAME-$service:/var/www/html/$path/. ../$path
-
+    try {
+        docker cp $COMPOSE_PROJECT_NAME-$service:/var/www/html/$path/. ../$path
+    } catch {
+        Log "Un problème est survenu lors de la copie, il est possible que le container $COMPOSE_PROJECT_NAME-$service ne soit pas démarré"
+    }
 
 }
 
