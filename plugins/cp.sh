@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['cp']='Cp::Execute' # Function name
-COMMANDS_USAGE['15']="  cp                       Copy [path] from container into local"
+COMMANDS_USAGE['13']="  cp                       Copy [path] from container into local"
 
 optHelp=false
 
