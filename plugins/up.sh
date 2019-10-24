@@ -101,9 +101,9 @@ Up::Execute()
    if [ -z "${OPEN_URL:-}" ]; then
      OPEN_URL="https://$SERVER_NAME"
    fi
-   echo ""
-   echo "$(UI.Color.Green)Open your browser on $OPEN_URL $(UI.Color.Default)"
-   echo ""
+
+   Up::Message
+
    if [ "$optOpen" = true ]; then
         if [ "$OSTYPE" != 'linux-gnu' ]; then
             open "$OPEN_URL"
@@ -111,8 +111,6 @@ Up::Execute()
             xdg-open "$OPEN_URL"
         fi
     fi
-
-    Up::Message
 
     if [ "$optSilent" = false ]; then
         # log in standard output
@@ -331,4 +329,7 @@ Up::Stop()
 Up::Message()
 {
     Log "Up::Message : override function in env.sh to display custom message to the developper"
+    echo ""
+    echo "$(UI.Color.Green)Open your browser on $OPEN_URL $(UI.Color.Default)"
+    echo ""
 }
