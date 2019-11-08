@@ -83,6 +83,11 @@ Up::Execute()
    touch "${JETDOCKER}/bash_home/.bash_history"
    touch "${JETDOCKER}/bash_home/.my_aliases"
 
+   if [ ! -z "${SYMFONY_PORT:-}" ]; then
+       ${DEBUG} && echo "symfony server:start --no-tls --port=${PHPFPM_PORT} --dir=../ --daemon"
+       symfony server:start --no-tls --port=${PHPFPM_PORT} --dir=../ --daemon
+   fi
+
    ${DEBUG} && docker-compose ${dockerComposeFile} config
    echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
    docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
@@ -115,6 +120,9 @@ Up::Execute()
     if [ "$optSilent" = false ]; then
         # log in standard output
         try {
+            if [ ! -z "${SYMFONY_PORT:-}" ]; then
+               symfony server:log --dir=../ &
+            fi
             docker-compose logs --follow
         } catch {
             Log "End docker-compose logs --follow"
@@ -317,10 +325,13 @@ EOM
 Up::Stop()
 {
     try {
-        docker-compose stop
-        docker-compose rm -f -v
-        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
-        docker network rm ${COMPOSE_PROJECT_NAME}_default
+       if [ ! -z "${SYMFONY_PORT:-}" ]; then
+          symfony server:stop --dir=../
+       fi
+       docker-compose stop
+       docker-compose rm -f -v
+       docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
+       docker network rm ${COMPOSE_PROJECT_NAME}_default
     } catch {
         Log 'End'
     }
