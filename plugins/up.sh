@@ -72,7 +72,7 @@ Up::Execute()
    Log "RUN WHEN EXIT : docker-compose stop;docker-compose rm -f -v"
 
    # On the first run, or on asked option : build the app
-   if [ "$optBuild" = true ]; then
+   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_BEFORE_STARTUP" = true ] ; then
       Up::Install
    fi
 
@@ -101,6 +101,11 @@ Up::Execute()
    } catch {
      Log $(cat /tmp/jetdocker-error)
    }
+
+   # On the first run, or on asked option : build the app
+   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_AFTER_STARTUP" = false ] ; then
+      Up::Install
+   fi
 
    # check if OPEN_URl is set (beware of unbound varaible error, see https://stackoverflow.com/questions/7832080/test-if-a-variable-is-set-in-bash-when-using-set-o-nounset )
    if [ -z "${OPEN_URL:-}" ]; then

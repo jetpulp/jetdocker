@@ -54,6 +54,10 @@ JETDOCKER_UP_DEFAULT_SERVICE=web
 # Defaut docker-compose startup service
 JETDOCKER_DB_DEFAULT_SERVICE=db
 
+# Defaut docker-compose startup service
+JETDOCKER_INSTALL_BEFORE_STARTUP=false
+JETDOCKER_INSTALL_AFTER_STARTUP=false
+
 dockerComposeFile="";
 dockerComposeInitialised=false;
 projectPath=$(pwd)
