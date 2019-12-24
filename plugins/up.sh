@@ -92,7 +92,7 @@ Up::Execute()
 
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
        ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --daemon"
-       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --daemon
+       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../${SYMFONY_DIR} --daemon
    fi
 
    ${DEBUG} && docker-compose ${dockerComposeFile} config
@@ -133,7 +133,7 @@ Up::Execute()
         # log in standard output
         try {
             if [ ! -z "${SYMFONY_PORT:-}" ]; then
-               symfony server:log --dir=../ &
+               symfony server:log --dir=../${SYMFONY_DIR} &
             fi
             docker-compose logs --follow
         } catch {
@@ -338,7 +338,7 @@ Up::Stop()
 {
     try {
        if [ ! -z "${SYMFONY_PORT:-}" ]; then
-          symfony server:stop --dir=../
+          symfony server:stop --dir=../${SYMFONY_DIR}
        fi
        docker-compose stop
        docker-compose rm -f -v
