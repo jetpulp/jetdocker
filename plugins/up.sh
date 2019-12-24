@@ -61,6 +61,13 @@ Up::Execute()
 
     if [ "$optXdebug" = true ]; then
         export XDEBUG_ENABLED=true
+        if [ ! -z "${SYMFONY_PORT:-}" ]; then
+            try {
+                phpenmod xdebug
+            } catch {
+             Log 'phpenmod xdebug error'
+           }
+        fi
     fi
 
     Compose::InitDockerCompose
@@ -103,7 +110,7 @@ Up::Execute()
    }
 
    # On the first run, or on asked option : build the app
-   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_AFTER_STARTUP" = false ] ; then
+   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_AFTER_STARTUP" = true ] ; then
       Up::Install
    fi
 
