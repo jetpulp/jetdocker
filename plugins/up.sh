@@ -91,7 +91,7 @@ Up::Execute()
    touch "${JETDOCKER}/bash_home/.my_aliases"
 
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
-       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --daemon"
+       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../${SYMFONY_DIR} --daemon"
        symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../${SYMFONY_DIR} --daemon
    fi
 
