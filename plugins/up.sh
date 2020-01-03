@@ -61,12 +61,12 @@ Up::Execute()
 
     if [ "$optXdebug" = true ]; then
         export XDEBUG_ENABLED=true
-        if [ ! -z "${SYMFONY_PORT:-}" ]; then
-            try {
-                phpenmod xdebug
-            } catch {
-             Log 'phpenmod xdebug error'
-           }
+    fi
+    if [ ! -z "${SYMFONY_PORT:-}" ]; then
+        if [ "$optXdebug" = true ]; then
+            Up::SymfonyXdebugOn
+        else
+            Up::SymfonyXdebugOff
         fi
     fi
 
@@ -355,4 +355,17 @@ Up::Message()
     echo ""
     echo "$(UI.Color.Green)Open your browser on $OPEN_URL $(UI.Color.Default)"
     echo ""
+}
+
+Up::SymfonyXdebugOn() {
+  Log "Up::SymfonyXdebugOn"
+  PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
+  sed -i'.original' -e 's/^;zend_extension/zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
+  Log "xdebug enabled"
+}
+Up::SymfonyXdebugOff() {
+  Log "Up::SymfonyXdebugOff"
+  PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
+  sed -i'.original' -e 's/^zend_extension/;zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
+  Log "xdebug disabled"
 }
