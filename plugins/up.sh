@@ -101,6 +101,8 @@ Up::Execute()
             passthru="--passthru=app_dev.php"
         fi
        fi
+       # TRUSTED_PROXY_IPS env var needed by symfony in order to set https schem correctly on requests
+       export TRUSTED_PROXY_IPS=127.0.0.1
        ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=../${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
        symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
    fi
