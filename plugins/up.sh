@@ -91,8 +91,18 @@ Up::Execute()
    touch "${JETDOCKER}/bash_home/.my_aliases"
 
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
-       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../${SYMFONY_PUBLIC_DIR} --daemon"
-       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../${SYMFONY_PUBLIC_DIR} --daemon
+       # For symfony < 4 bootstrap app.php or app_dev.php depending on SYMFONY_ENV var
+       # For magento and symfony >=4 index.php bootstrap by default
+       export passthru=''
+       if [ -f "../${SYMFONY_PUBLIC_DIR}/app.php" ]; then
+        if [ ${SYMFONY_ENV} = 'prod' ]; then
+            passthru="--passthru=app.php"
+        else
+            passthru="--passthru=app_dev.php"
+        fi
+       fi
+       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=../${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
+       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
    fi
 
    ${DEBUG} && docker-compose ${dockerComposeFile} config
@@ -338,7 +348,7 @@ Up::Stop()
 {
     try {
        if [ ! -z "${SYMFONY_PORT:-}" ]; then
-          symfony server:stop --dir=../${SYMFONY_PUBLIC_DIR}
+          symfony server:stop --dir=../
        fi
        docker-compose stop
        docker-compose rm -f -v
