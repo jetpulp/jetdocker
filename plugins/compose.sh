@@ -221,7 +221,7 @@ init-data-containers()
         DatabaseBackup::Fetch
 
         # shellcheck disable=SC2086
-        docker-compose ${dockerComposeFile} up -d db
+        docker-compose ${dockerComposeFile} up -d ${JETDOCKER_DB_DEFAULT_SERVICE}
         echo "Restoring Database ......... "
         echo ""
         startTime=$(date +%s)
