@@ -64,9 +64,9 @@ Up::Execute()
     fi
     if [ ! -z "${SYMFONY_PORT:-}" ]; then
         if [ "$optXdebug" = true ]; then
-            Up::SymfonyXdebugOn
+            Symfony::XdebugOn
         else
-            Up::SymfonyXdebugOff
+            Symfony::XdebugOff
         fi
     fi
 
@@ -90,22 +90,7 @@ Up::Execute()
    touch "${JETDOCKER}/bash_home/.bash_history"
    touch "${JETDOCKER}/bash_home/.my_aliases"
 
-   if [ ! -z "${SYMFONY_PORT:-}" ]; then
-       # For symfony < 4 bootstrap app.php or app_dev.php depending on SYMFONY_ENV var
-       # For magento and symfony >=4 index.php bootstrap by default
-       export passthru=''
-       if [ -f "../${SYMFONY_PUBLIC_DIR}/app.php" ]; then
-        if [ ${SYMFONY_ENV} = 'prod' ]; then
-            passthru="--passthru=app.php"
-        else
-            passthru="--passthru=app_dev.php"
-        fi
-       fi
-       # TRUSTED_PROXY_IPS env var needed by symfony in order to set https schem correctly on requests
-       export TRUSTED_PROXY_IPS=127.0.0.1
-       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=../${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
-       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=../ --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
-   fi
+   Symfony::Start
 
    ${DEBUG} && docker-compose ${dockerComposeFile} config
    echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
@@ -349,9 +334,7 @@ EOM
 Up::Stop()
 {
     try {
-       if [ ! -z "${SYMFONY_PORT:-}" ]; then
-          symfony server:stop --dir=../
-       fi
+       Symfony::Stop
        docker-compose stop
        docker-compose rm -f -v
        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
