@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-COMMANDS['symfony']='Symfony::Execute' # Function name
-COMMANDS_USAGE['03']="  symfony                  Restart symfony binary server (for enabling/disabling xdebug)"
+COMMANDS['symfony-restart']='Symfony::Execute' # Function name
+COMMANDS_USAGE['03']="  symfony-restart          Restart symfony binary server (for enabling/disabling xdebug)"
 
 optXdebug=false
 optHelp=false
