@@ -61,7 +61,7 @@ Symfony::Execute()
 Symfony::Usage()
 {
   echo ""
-  echo "$(UI.Color.Blue)Usage:$(UI.Color.Default)  jetdocker symfony [OPTIONS]"
+  echo "$(UI.Color.Blue)Usage:$(UI.Color.Default)  jetdocker symfony-restart [OPTIONS]"
   echo ""
   echo "$(UI.Color.Yellow)Options:$(UI.Color.Default)"
   echo "  -x, --xdebug             Enable xdebug in Symfony Server"
