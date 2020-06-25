@@ -142,7 +142,7 @@ function Compose::RaisePort {
 
     port=${1}
     try {
-        nc -z -w 1 localhost "$port" > /dev/null 2>&1
+        nc -z -w -n 1 localhost "$port" > /dev/null 2>&1
         Compose::RaisePort $((port+1))
     } catch {
         echo $port
