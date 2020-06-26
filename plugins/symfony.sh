@@ -104,7 +104,7 @@ Symfony::XdebugOn()
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
   sed -i'.original' -e 's/^;zend_extension/zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug enabled"
-  php -v
+  symfony php -v
 }
 
 Symfony::XdebugOff()
@@ -113,5 +113,5 @@ Symfony::XdebugOff()
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
   sed -i'.original' -e 's/^zend_extension/;zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug disabled"
-  php -v
+  symfony php -v
 }
