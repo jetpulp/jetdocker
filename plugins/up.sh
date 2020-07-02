@@ -263,6 +263,10 @@ server {
     error_log /proc/self/fd/2 debug;
     access_log /proc/self/fd/1;
 
+    proxy_buffer_size   128k;
+    proxy_buffers   4 256k;
+    proxy_busy_buffers_size   256k;
+
     location / {
         proxy_pass http://{{ trim \$host }};
         proxy_set_header Host \$http_host;
@@ -288,6 +292,10 @@ server {
     proxy_buffering off;
     error_log /proc/self/fd/2 debug;
     access_log /proc/self/fd/1;
+
+    proxy_buffer_size   128k;
+    proxy_buffers   4 256k;
+    proxy_busy_buffers_size   256k;
 
     location / {
         proxy_pass https://{{ trim \$host }}-ssl;
