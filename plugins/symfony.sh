@@ -73,6 +73,7 @@ Symfony::Usage()
 
 Symfony::Start()
 {
+   Log "Symfony::Start"
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
        # For symfony < 4 bootstrap app.php or app_dev.php depending on SYMFONY_ENV var
        # For magento and symfony >=4 index.php bootstrap by default
@@ -93,6 +94,7 @@ Symfony::Start()
 
 Symfony::Stop()
 {
+   Log "Symfony::Stop"
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
       symfony server:stop --dir=../
    fi
@@ -114,4 +116,13 @@ Symfony::XdebugOff()
   sed -i'.original' -e 's/^zend_extension/;zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug disabled"
   symfony php -v
+}
+
+Symfony::Logs()
+{
+  Log "Symfony::Logs"
+  if [ ! -z "${SYMFONY_PORT:-}" ]; then
+     symfony server:log --dir=../ &
+  fi
+
 }

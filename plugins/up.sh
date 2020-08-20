@@ -129,9 +129,7 @@ Up::Execute()
     if [ "$optSilent" = false ]; then
         # log in standard output
         try {
-            if [ ! -z "${SYMFONY_PORT:-}" ]; then
-               symfony server:log --dir=../${SYMFONY_PUBLIC_DIR} &
-            fi
+            Symfony::Logs
             docker-compose logs --follow
         } catch {
             Log "End docker-compose logs --follow"
