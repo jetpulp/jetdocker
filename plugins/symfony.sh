@@ -11,7 +11,7 @@ Symfony::Execute()
 {
 
     namespace symfony
-    ${DEBUG} && Log::AddOutput up DEBUG
+    ${DEBUG} && Log::AddOutput symfony DEBUG
     Log "Symfony::Execute"
 
     # Analyse des arguments de la ligne de commande grâce à l'utilitaire getopts
@@ -75,8 +75,6 @@ Symfony::Start()
 {
    Log "Symfony::Start"
 
-
-
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
        # For symfony < 4 bootstrap app.php or app_dev.php depending on SYMFONY_ENV var
        # For magento and symfony >=4 index.php bootstrap by default
@@ -91,8 +89,8 @@ Symfony::Start()
        fi
        # TRUSTED_PROXY_IPS env var needed by symfony in order to set https schem correctly on requests
        export TRUSTED_PROXY_IPS=127.0.0.1
-       ${DEBUG} && echo "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath}/ --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
-       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath}/ --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
+       Log "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
+       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
    fi
 }
 
@@ -100,6 +98,7 @@ Symfony::Stop()
 {
    Log "Symfony::Stop"
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
+      Log "symfony server:stop --dir=${projectPath}"
       symfony server:stop --dir=${projectPath}
    fi
 }
@@ -126,6 +125,7 @@ Symfony::Logs()
 {
   Log "Symfony::Logs"
   if [ ! -z "${SYMFONY_PORT:-}" ]; then
+     Log "symfony server:log --dir=${projectPath} &"
      symfony server:log --dir=${projectPath} &
   fi
 
