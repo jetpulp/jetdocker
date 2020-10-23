@@ -4,7 +4,6 @@ COMMANDS['phpmyadmin']='PhpMyAdmin::Execute' # Function name
 COMMANDS_USAGE['25']="  phpmyadmin               Start/Restart a PhpMyAdmin container connecting to all running MySQL containers"
 COMMANDS_STANDALONE['phpmyadmin']=' ' # Function name
 
-optHelp=false
 optPort=8888
 
 #
@@ -21,7 +20,8 @@ PhpMyAdmin::Execute()
     local OPTIND opt
     while getopts ":hp:-:" opt ; do
        case $opt in
-           h ) optHelp=true;;
+           h ) PhpMyAdmin::Usage
+               exit 0;;
            p ) optPort=$OPTARG;;
            - ) case $OPTARG in
                   help ) PhpMyAdmin::Usage
@@ -36,13 +36,6 @@ PhpMyAdmin::Execute()
       esac
     done
     shift $((OPTIND - 1))
-
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      PhpMyAdmin::Usage
-      exit 0
-    }
 
     try {
         docker rm -f -v phpmyadmin phpmyadmin-gen > /dev/null 2>&1

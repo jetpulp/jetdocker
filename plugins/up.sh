@@ -8,8 +8,6 @@ optBuild=false
 optSilent=false
 optOpen=false
 optXdebug=false
-optHelp=false
-
 
 Up::Execute()
 {
@@ -27,7 +25,8 @@ Up::Execute()
            s ) optSilent=true;;
            o ) optOpen=true;;
            x ) optXdebug=true;;
-           h ) optHelp=true;;
+           h ) Up::Usage
+               exit 0;;
            - ) case $OPTARG in
                   delete-data ) optDelete=true;;
                   xdebug ) optXdebug=true;;
@@ -52,12 +51,6 @@ Up::Execute()
     Log "optSilent = ${optSilent}"
     Log "optOpen = ${optOpen}"
     Log "optXdebug = ${optXdebug}"
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      Up::Usage
-      exit 0
-    }
 
     if [ "$optXdebug" = true ]; then
         export XDEBUG_ENABLED=true

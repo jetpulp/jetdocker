@@ -4,8 +4,6 @@ COMMANDS['term']='Term::Execute' # Function name
 COMMANDS_USAGE['05']="  term                     Open a shell terminal into one of docker-compose service"
 
 optUser=''
-optHelp=false
-
 
 Term::Execute()
 {
@@ -18,7 +16,8 @@ Term::Execute()
     while getopts ":hu:-:" opt ; do
        case $opt in
            h ) optUser=$OPTARG;;
-           u ) optHelp=true;;
+           u ) Term::Usage
+               exit 0;;
            - ) case $OPTARG in
                   user ) optUser=$2;shift;;
                   help ) Term::Usage
@@ -35,12 +34,6 @@ Term::Execute()
     shift $((OPTIND - 1))
 
     Log "optUser = ${optUser}"
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      Term::Usage
-      exit 0
-    }
 
     Compose::InitDockerCompose
 

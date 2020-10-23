@@ -5,7 +5,6 @@ COMMANDS_USAGE['30']="  search-replace-db        Run Search Replace DB in a cont
 
 optFrom=production
 optTo=local
-optHelp=false
 
 #
 # Run the search-replace-db container configured in docker-compose.yml
@@ -24,7 +23,8 @@ SearchReplaceDb::Execute()
        case $opt in
            f ) optFrom=$OPTARG;;
            t ) optTo=$OPTARG;;
-           h ) optHelp=true;;
+           h ) SearchReplaceDb::Usage
+               exit 0;;
            - ) case $OPTARG in
                   help ) SearchReplaceDb::Usage
                          exit 0;;
@@ -41,12 +41,6 @@ SearchReplaceDb::Execute()
 
     Log "optFrom = ${optFrom}"
     Log "optTo   = ${optTo}"
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      SearchReplaceDb::Usage
-      exit 0
-    }
 
     Compose::InitDockerCompose
 

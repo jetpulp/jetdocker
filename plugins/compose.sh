@@ -3,8 +3,6 @@
 COMMANDS['compose']='Compose::Execute' # Function name
 COMMANDS_USAGE['10']="  compose                  Run a docker-compose command (alias for docker-compose run --rm)"
 
-optHelp=false
-
 Compose::Execute()
 {
     namespace compose
@@ -15,7 +13,8 @@ Compose::Execute()
     local OPTIND opt
     while getopts ":h-:" opt ; do
        case $opt in
-           h ) optHelp=true;;
+           h ) Compose::Usage
+               exit 0;;
            - ) case $OPTARG in
                   help ) Compose::Usage
                          exit 0;;
@@ -29,13 +28,6 @@ Compose::Execute()
       esac
     done
     shift $((OPTIND - 1))
-
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      Compose::Usage
-      exit
-    }
 
     Compose::InitDockerCompose
 

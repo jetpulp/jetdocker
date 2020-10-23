@@ -4,8 +4,6 @@ COMMANDS['free-disk-space']='FreeDiskSpace::Execute' # Function name
 COMMANDS_USAGE['15']="  free-disk-space          Free disk space utility"
 COMMANDS_STANDALONE['free-disk-space']=' ' # Function name
 
-optHelp=false
-
 #
 #  Utility method to free disk space used by docker
 #
@@ -22,7 +20,8 @@ FreeDiskSpace::Execute()
     local OPTIND opt
     while getopts ":h-:" opt ; do
        case $opt in
-           h ) optHelp=true;;
+           h ) FreeDiskSpace::Usage
+               exit 0;;
            - ) case $OPTARG in
                   help ) FreeDiskSpace::Usage
                          exit 0;;
@@ -36,13 +35,6 @@ FreeDiskSpace::Execute()
       esac
     done
     shift $((OPTIND - 1))
-
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      FreeDiskSpace::Usage
-      exit 0
-    }
 
     # xargs is different between linux en osx => -r option is needed on linux
     # (in order to not run  the command if no argument provided)

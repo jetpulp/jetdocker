@@ -4,8 +4,6 @@ COMMANDS['symfony-restart']='Symfony::Execute' # Function name
 COMMANDS_USAGE['03']="  symfony-restart          Restart symfony binary server (for enabling/disabling xdebug)"
 
 optXdebug=false
-optHelp=false
-
 
 Symfony::Execute()
 {
@@ -19,7 +17,8 @@ Symfony::Execute()
     while getopts ":xh-:" opt ; do
        case $opt in
            x ) optXdebug=true;;
-           h ) optHelp=true;;
+           h ) Symfony::Usage
+               exit 0;;
            - ) case $OPTARG in
                   xdebug ) optXdebug=true;;
                   help ) Symfony::Usage
@@ -36,12 +35,6 @@ Symfony::Execute()
     shift $((OPTIND - 1))
 
     Log "optXdebug = ${optXdebug}"
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      Symfony::Usage
-      exit 0
-    }
 
     if [ ! -z "${SYMFONY_PORT:-}" ]; then
         Symfony::Stop

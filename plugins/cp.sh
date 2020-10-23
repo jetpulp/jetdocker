@@ -3,8 +3,6 @@
 COMMANDS['cp']='Cp::Execute' # Function name
 COMMANDS_USAGE['13']="  cp                       Copy [path] from container into local"
 
-optHelp=false
-
 Cp::Execute()
 {
 
@@ -16,7 +14,8 @@ Cp::Execute()
     local OPTIND opt
     while getopts ":h-:" opt ; do
        case $opt in
-           h ) optHelp=true;;
+           h ) Cp::Usage
+               exit 0;;
            - ) case $OPTARG in
                   help ) Cp::Usage
                          exit 0;;
@@ -30,13 +29,6 @@ Cp::Execute()
       esac
     done
     shift $((OPTIND - 1))
-
-    Log "optHelp = ${optHelp}"
-
-    ${optHelp} && {
-      Cp::Usage
-      exit 0
-    }
 
     if [ -z "${JETDOCKER_TERM_DEFAULT_SERVICE:-}" ]; then
         try {
