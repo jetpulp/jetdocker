@@ -85,6 +85,8 @@ EOM
         -e VIRTUAL_HOST=pma."$JETDOCKER_DOMAIN_NAME" \
          -p "$optPort:80" phpmyadmin/phpmyadmin
 
+    docker exec -it phpmyadmin sh -c "chmod 755 /etc/phpmyadmin/config.user.inc.php"
+
     for network in $(docker network ls --filter name=default -q);
     do
         docker network connect "$network" phpmyadmin 2> /dev/null
