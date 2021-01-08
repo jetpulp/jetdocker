@@ -152,6 +152,10 @@ Jetdocker::CheckProject()
 
     Log "Jetdocker::CheckProject"
 
+    envShPath=$(find $optConfigPath -type f -name "env.sh")
+    Log "env.sh in $envShPath"
+    optConfigPath=$(dirname $envShPath)
+
     Log "go in $optConfigPath"
     if [ -d "$optConfigPath" ]; then
         cd "$optConfigPath" || exit
