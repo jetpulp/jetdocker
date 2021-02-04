@@ -212,6 +212,9 @@ init-data-containers()
         docker volume create --name "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
         DatabaseBackup::Fetch
 
+        # fix errors because init-db.sh is not executable :
+        chmod ugo+x db/*.sh
+
         # shellcheck disable=SC2086
         docker-compose ${dockerComposeFile} up -d db
         echo "Restoring Database ......... "
