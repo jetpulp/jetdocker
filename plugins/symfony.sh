@@ -73,7 +73,12 @@ Symfony::Start()
        # For magento and symfony >=4 index.php bootstrap by default
        export passthru=''
 
-       if [ -f "${projectPath}/${SYMFONY_PUBLIC_DIR}/app.php" ]; then
+       export symfonyProjectPath=${projectPath}
+       if [ ! -z "${SYMFONY_PROJECT_DIR:-}" ]; then
+         symfonyProjectPath="${symfonyProjectPath}/${SYMFONY_PROJECT_DIR}"
+       fi
+
+       if [ -f "${symfonyProjectPath}/${SYMFONY_PUBLIC_DIR}/app.php" ]; then
         if [ ${SYMFONY_ENV} = 'prod' ]; then
             passthru="--passthru=app.php"
         else
@@ -82,8 +87,8 @@ Symfony::Start()
        fi
        # TRUSTED_PROXY_IPS env var needed by symfony in order to set https schem correctly on requests
        export TRUSTED_PROXY_IPS=127.0.0.1
-       Log "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
-       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${projectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
+       Log "symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${symfonyProjectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}"
+       symfony server:start --no-tls --port=${SYMFONY_PORT} --dir=${symfonyProjectPath} --document-root=${SYMFONY_PUBLIC_DIR} --daemon ${passthru}
    fi
 }
 
@@ -91,8 +96,8 @@ Symfony::Stop()
 {
    Log "Symfony::Stop"
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
-      Log "symfony server:stop --dir=${projectPath}"
-      symfony server:stop --dir=${projectPath}
+      Log "symfony server:stop --dir=${symfonyProjectPath}"
+      symfony server:stop --dir=${symfonyProjectPath}
    fi
 }
 
@@ -118,8 +123,12 @@ Symfony::Logs()
 {
   Log "Symfony::Logs"
   if [ ! -z "${SYMFONY_PORT:-}" ]; then
-     Log "symfony server:log --dir=${projectPath} &"
-     symfony server:log --dir=${projectPath} &
+     export symfonyProjectPath=${projectPath}
+     if [ ! -z "${SYMFONY_PROJECT_DIR:-}" ]; then
+       symfonyProjectPath="${symfonyProjectPath}/${SYMFONY_PROJECT_DIR}"
+     fi
+     Log "symfony server:log --dir=${symfonyProjectPath} &"
+     symfony server:log --dir=${symfonyProjectPath} &
   fi
 
 }

@@ -221,7 +221,12 @@ init-data-containers()
         echo ""
         startTime=$(date +%s)
         # Wait for database connection is ready, see https://github.com/betalo-sweden/await
-        echo "Waiting ${DB_RESTORE_TIMEOUT} for mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE is ready ...... "
+        if [ ! -z "${MYSQL_DATABASE:-}" ]; then
+          echo "Waiting ${DB_RESTORE_TIMEOUT} for mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE is ready ...... "
+        fi
+        if [ ! -z "${POSTGRES_DB:-}" ]; then
+          echo "Waiting ${DB_RESTORE_TIMEOUT} for postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB is ready ...... "
+        fi
         echo ""
         echo "$(UI.Color.Green)follow database restoration logs in an other terminal running this command : "
         echo "$(UI.Color.Blue)  docker logs -f ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}"
@@ -230,7 +235,12 @@ init-data-containers()
         echo "$(UI.Color.Green)  Please wait ${DB_RESTORE_TIMEOUT} ... "
         echo ""
         try {
-            await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+            if [ ! -z "${MYSQL_DATABASE:-}" ]; then
+              await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+            fi
+            if [ ! -z "${POSTGRES_DB:-}" ]; then
+              await -q -t ${DB_RESTORE_TIMEOUT} postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB > /dev/null 2>&1
+            fi
             endTime=$(date +%s)
             echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
             try {

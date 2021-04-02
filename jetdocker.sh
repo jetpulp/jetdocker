@@ -49,6 +49,11 @@ export MYSQL_ROOT_PASSWORD=root
 export MYSQL_USER=root
 export MYSQL_PASSWORD=root
 
+# Default postgres credentials
+export POSTGRES_ROOT_PASSWORD=root
+export POSTGRES_USER=root
+export POSTGRES_PASSWORD=root
+
 # Defaut docker-compose startup service
 JETDOCKER_UP_DEFAULT_SERVICE=web
 # Defaut docker-compose startup service
