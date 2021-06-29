@@ -83,6 +83,7 @@ EOM
         -v /tmp/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php \
         -e PMA_ABSOLUTE_URI=http://pma."$JETDOCKER_DOMAIN_NAME"  \
         -e VIRTUAL_HOST=pma."$JETDOCKER_DOMAIN_NAME" \
+        -e UPLOAD_LIMIT=200M \
          -p "$optPort:80" phpmyadmin/phpmyadmin
 
     docker exec -it phpmyadmin sh -c "chmod 755 /etc/phpmyadmin/config.user.inc.php"
