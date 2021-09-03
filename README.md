@@ -20,6 +20,7 @@ __Disclaimer:__ _Jetdocker works on macOS and Linux._
 * Unix-like operating system (macOS or Linux)
 * bash 4
 * `docker` and `docker-compose` should be installed
+* `symfony` should be installed
 * `git` should be installed
 * `await` should be installed
 
@@ -31,6 +32,10 @@ On macOSX bash3 is installed by default, but you can install bash4
 brew install bash
 echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
 ```
+
+#### Install symfony binary
+
+See https://symfony.com/download 
 
 #### Install await
 
