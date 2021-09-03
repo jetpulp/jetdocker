@@ -20,6 +20,7 @@ __Disclaimer:__ _Jetdocker works on macOS and Linux._
 * Unix-like operating system (macOS or Linux)
 * bash 4
 * `docker` and `docker-compose` should be installed
+* `php` and `xdebug` PHP extension
 * `symfony` should be installed
 * `git` should be installed
 * `await` should be installed
@@ -31,6 +32,26 @@ On macOSX bash3 is installed by default, but you can install bash4
 ```shell
 brew install bash
 echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
+```
+
+#### Install php and xdebug extension
+
+On macOSX
+
+```shell
+brew install php
+pecl install xdebug
+```
+
+Then create the file `/usr/local/etc/php/8.0/conf.d/ext-xdebug.ini` with the following content:
+
+```
+[xdebug]
+;zend_extension="/usr/local/lib/php/pecl/20200930/xdebug.so"
+xdebug.mode=debug
+xdebug.start_with_request=yes
+xdebug.var_display_max_depth=15
+xdebug.idekey=PHPSTORM
 ```
 
 #### Install symfony binary
