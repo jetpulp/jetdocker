@@ -106,6 +106,29 @@ Usually `SERVER_NAME` is constructed based on an other env var : `JETDOCKER_DOMA
 
 `JETDOCKER_DOMAIN_NAME` can be modified in `~/.jetdockerrc`, for example: `JETDOCKER_DOMAIN_NAME=192.168.0.10.xip.io`, xip.io will resolve *.192.168.0.10.xip.io on 192.168.0.10, you could then test with a mobile device on your local server which is on 192.168.0.10 on your local LAN.
 
+Some hook functions can be added or overridden in env.sh, here some examples : 
+
+```shell
+Up::InstallBeforeStartUp()
+{
+    Log "Up::InstallBeforeStartUp : add this function in env.sh to export env var in some config file"  
+    Up::Install ## run make install under the hood
+}
+Up::InstallAfterStartUp()
+{
+    Log "Up::InstallAfterStartUp : add this function in env.sh to export env var in some config file"  
+    Up::Install ## run make install under the hood
+}
+Up::ExportEnv()
+{
+    Log "Up::ExportEnv : add this function in env.sh to export env var in some config file"  
+}
+Up::StartLocalApp()
+{
+    Log "Up::StartLocalApp : add this function in env.sh to start a local app"
+}
+```
+
 The main usage of jetdocker is to run a docker-compose config :
 
 ```shell

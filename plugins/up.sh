@@ -72,8 +72,8 @@ Up::Execute()
    Log "RUN WHEN EXIT : docker-compose stop;docker-compose rm -f -v"
 
    # On the first run, or on asked option : build the app
-   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_BEFORE_STARTUP" = true ] ; then
-      Up::Install
+   if [ "$optBuild" = true ] ; then
+     Jetdocker::ExecuteFunctionIfExists Up::InstallBeforeStartUp
    fi
 
    # Run Compose::CheckOpenPorts again in case ports have been used during Compose::InitDataVolumes or Up::Install
@@ -99,9 +99,11 @@ Up::Execute()
      Log $(cat /tmp/jetdocker-error)
    }
 
+   Up::ExportEnv
+
    # On the first run, or on asked option : build the app
-   if [ "$optBuild" = true ] && [ "$JETDOCKER_INSTALL_AFTER_STARTUP" = true ] ; then
-      Up::Install
+   if [ "$optBuild" = true ] ; then
+     Jetdocker::ExecuteFunctionIfExists Up::InstallAfterStartUp
    fi
 
    # check if OPEN_URl is set (beware of unbound varaible error, see https://stackoverflow.com/questions/7832080/test-if-a-variable-is-set-in-bash-when-using-set-o-nounset )
@@ -118,6 +120,8 @@ Up::Execute()
             xdg-open "$OPEN_URL"
         fi
     fi
+
+    Jetdocker::ExecuteFunctionIfExists Up::StartLocalApp
 
     if [ "$optSilent" = false ]; then
         # log in standard output
@@ -351,12 +355,19 @@ Up::Message()
     echo ""
 }
 
+Up::ExportEnv()
+{
+    Log "Up::ExportEnv : override function in env.sh to export env variables (ports) for local project"
+
+}
+
 Up::SymfonyXdebugOn() {
   Log "Up::SymfonyXdebugOn"
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
   sed -i'.original' -e 's/^;zend_extension/zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug enabled"
 }
+
 Up::SymfonyXdebugOff() {
   Log "Up::SymfonyXdebugOff"
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
