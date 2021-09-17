@@ -340,6 +340,7 @@ Up::Stop()
        Symfony::Stop
        docker-compose stop
        docker-compose rm -f -v
+       Jetdocker::ExecuteFunctionIfExists Up::StopLocalApp
        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
        docker network rm ${COMPOSE_PROJECT_NAME}_default
     } catch {
