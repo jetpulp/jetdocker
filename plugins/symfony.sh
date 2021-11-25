@@ -66,6 +66,8 @@ Symfony::Usage()
 
 Symfony::Start()
 {
+   namespace symfony
+   ${DEBUG} && Log::AddOutput symfony DEBUG
    Log "Symfony::Start"
 
    if [ ! -z "${SYMFONY_PORT:-}" ]; then
