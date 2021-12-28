@@ -63,13 +63,13 @@ See https://symfony.com/download
 On linux
 
 ```shell
-sudo curl -s -f -L -o /usr/local/bin/await https://github.com/betalo-sweden/await/releases/download/v0.4.0/await-linux-amd64
+sudo curl -s -f -L -o /usr/local/bin/await https://github.com/betalo-sweden/await/releases/download/v1.2.0/await-linux-amd64
 sudo chmod +x /usr/local/bin/await
 ```
 
 On macOSX
 ```shell
-curl -f -L -o /usr/local/bin/await https://github.com/betalo-sweden/await/releases/download/v0.4.0/await-darwin-amd64
+curl -f -L -o /usr/local/bin/await https://github.com/betalo-sweden/await/releases/download/v1.2.0/await-darwin-amd64
 chmod +x /usr/local/bin/await
 ```
 
