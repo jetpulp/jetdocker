@@ -59,6 +59,8 @@ JETDOCKER_UP_DEFAULT_SERVICE=web
 # Defaut docker-compose startup service
 JETDOCKER_DB_DEFAULT_SERVICE=db
 
+DOCKER_DEFAULT_PLATEFORM=linux/amd64
+
 dockerComposeFile="";
 dockerComposeInitialised=false;
 projectPath=$(pwd)
