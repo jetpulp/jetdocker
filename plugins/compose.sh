@@ -211,6 +211,7 @@ init-data-containers()
     } catch {
         docker volume create --name "${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}data" > /dev/null 2>&1
         DatabaseBackup::Fetch
+        DatabaseBackup::ReplaceInDumpFile
 
         # fix errors because init-db.sh is not executable :
         chmod ugo+x db/*.sh
