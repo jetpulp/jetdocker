@@ -365,13 +365,13 @@ Up::ExportEnv()
 Up::SymfonyXdebugOn() {
   Log "Up::SymfonyXdebugOn"
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
-  sed -i'.original' -e 's/^;zend_extension/zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
+  sed -i'.original' -e 's/^;zend_extension/zend_extension/g' "${PHP_INSTALL_PATH}/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug enabled"
 }
 
 Up::SymfonyXdebugOff() {
   Log "Up::SymfonyXdebugOff"
   PHP_VERSION=$(symfony php -r "echo preg_replace('/(\.\d+)$/','', phpversion());")
-  sed -i'.original' -e 's/^zend_extension/;zend_extension/g' "/usr/local/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
+  sed -i'.original' -e 's/^zend_extension/;zend_extension/g' "${PHP_INSTALL_PATH}/etc/php/$PHP_VERSION/conf.d/ext-xdebug.ini"
   Log "xdebug disabled"
 }

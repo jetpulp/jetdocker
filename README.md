@@ -43,7 +43,7 @@ brew install php
 pecl install xdebug
 ```
 
-Then create the file `/usr/local/etc/php/8.0/conf.d/ext-xdebug.ini` with the following content:
+Then create the file `${PHP_INSTALL_PATH}/etc/php/8.0/conf.d/ext-xdebug.ini` where `${PHP_INSTALL_PATH}` is `/usr/local` or `/opt/homebrew` (following your architecture, see https://docs.brew.sh/Installation) with the following content:
 
 ```
 [xdebug]

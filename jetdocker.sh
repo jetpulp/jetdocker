@@ -59,7 +59,13 @@ JETDOCKER_UP_DEFAULT_SERVICE=web
 # Defaut docker-compose startup service
 JETDOCKER_DB_DEFAULT_SERVICE=db
 
-DOCKER_DEFAULT_PLATEFORM=linux/amd64
+#export DOCKER_DEFAULT_PLATEFORM=linux/amd64
+export DOCKER_DEFAULT_PLATEFORM=linux/arm64/v8
+
+export PHP_INSTALL_PATH=/usr/local
+if [[ $(/usr/bin/uname -m) == "arm64" ]]; then
+  export PHP_INSTALL_PATH=/opt/homebrew
+fi
 
 dockerComposeFile="";
 dockerComposeInitialised=false;
