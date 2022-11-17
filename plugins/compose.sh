@@ -248,7 +248,7 @@ init-data-containers()
                 hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
                 Log "hasSearchReplace : ${hasSearchReplace}"
                 if [ "${hasSearchReplace}" -gt 0 ]; then
-                    SearchReplaceDb::Execute
+                    SearchReplaceDb::Run
                 fi
             } catch {
                 Log "No search-replace-db configured in docker-compose.yml"
