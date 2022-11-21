@@ -50,33 +50,35 @@ SearchReplaceDb::Run()
     ${DEBUG} && Log::AddOutput search-replace-db DEBUG
     Log "SearchReplaceDb::Run"
 
-
-    if [[ "$SEARCH_AND_REPLACE_OPTIONS" == *"--search"* ]]; then
-      Log "options contains --search"
+    if [[ ${#SEARCH_AND_REPLACE[@]} -gt 0 ]]; then
+      Log "\$SEARCH_AND_REPLACE is defined"
     else
       Log "options doesn't contains --search, add it from config file or display error"
       DEPRECATED_CONFIG_FILE="./db/config.yml"
       if test -f "$DEPRECATED_CONFIG_FILE"; then
           Log "$DEPRECATED_CONFIG_FILE exists."
-          echo "$(UI.Color.Yellow)Deprecated use of db/config.yml, please configure --search and --replace options in SEARCH_AND_REPLACE_OPTIONS in env.sh file instead$(UI.Color.Default)"
+          echo "$(UI.Color.Yellow)Deprecated use of db/config.yml, please configure --search and --replace in SEARCH_AND_REPLACE env var in env.sh file instead$(UI.Color.Default)"
           if hash yq 2>/dev/null
           then
             search=$(yq '.search-and-replace-db[].production' $DEPRECATED_CONFIG_FILE)
-            SEARCH_AND_REPLACE_OPTIONS="--search $search --replace $SERVER_NAME $SEARCH_AND_REPLACE_OPTIONS"
+            SEARCH_AND_REPLACE=("--search $search --replace $SERVER_NAME")
           else
             echo "$(UI.Color.Red) You need yq utils in order to read $DEPRECATED_CONFIG_FILE please install it"
             echo "$(UI.Color.Red) MacOS : brew install yq"
             echo "$(UI.Color.Red) Linux : wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq chmod +x /usr/bin/yq"
           fi
       else
-        echo "$(UI.Color.Red)You should configure --search and --replace options in SEARCH_AND_REPLACE_OPTIONS in env.sh file, for example : "
-        echo "$(UI.Color.Default)export SEARCH_AND_REPLACE_OPTIONS=\"--search www.website.com --replace \${SERVER_NAME}\""
+        echo "$(UI.Color.Red)You should configure --search and --replace options in SEARCH_AND_REPLACE in env.sh file, for example : "
+        echo "$(UI.Color.Default)export SEARCH_AND_REPLACE=(\"--search www.website.com --replace \${SERVER_NAME}\")"
         exit 1
       fi
     fi
 
-    ${DEBUG} && echo "docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $SEARCH_AND_REPLACE_OPTIONS"
-    docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $SEARCH_AND_REPLACE_OPTIONS
+    for searchAndReplace in "${SEARCH_AND_REPLACE[@]}"
+    do
+      ${DEBUG} && echo "docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS"
+      docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS
+    done
 
 }
 
