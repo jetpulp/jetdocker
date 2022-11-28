@@ -76,6 +76,8 @@ Compose::InitDockerCompose()
 
     Compose::CheckOpenPorts
 
+    Compose::CheckLocalHostName
+
     if [ "$optDelete" = true ]; then
         # Delete data volumes
         Compose::DeleteDataVolumes
@@ -125,6 +127,36 @@ Compose::CheckOpenPorts()
     Log "${0} : DOCKER_PORT_RABBITMQ = ${DOCKER_PORT_RABBITMQ}"
     Log "${0} : DOCKER_PORT_MAILHOG = ${DOCKER_PORT_MAILHOG}"
 
+}
+
+#
+# Add $VIRTUAL_HOST in /etc/hosts
+#
+Compose::CheckLocalHostName()
+{
+    Log "Compose::CheckLocalHostName"
+
+    if [ -z "$VIRTUAL_HOST" ]
+    then
+          VIRTUAL_HOST=$SERVER_NAME
+    fi
+
+    for VHOST in $(echo $VIRTUAL_HOST | tr "," " ")
+    do
+        Log "Check if $VHOST is in /etc/hosts"
+        try {
+          grep "127.0.0.1 $VHOST" /etc/hosts > /dev/null 2>&1
+          Log "127.0.0.1 $VHOST is in /etc/hosts"
+        } catch {
+          Log "127.0.0.1 $VHOST is not in /etc/hosts"
+          echo "$(UI.Color.Yellow)Do you want to add 127.0.0.1 $VHOST in your /etc/hosts file ? (y/n)$(UI.Color.Default)"
+          read -r yes
+          if [[ "$yes" = 'y' || "$yes" = 'yes' ]]; then
+              Log "Add 127.0.0.1 $VHOST in /etc/hosts"
+              echo "127.0.0.1 $VHOST" | sudo tee -a /etc/hosts > /dev/null
+          fi
+        }
+    done
 }
 
 #
