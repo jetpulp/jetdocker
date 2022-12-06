@@ -145,7 +145,7 @@ Compose::CheckLocalHostName()
     do
         Log "Check if $VHOST is in /etc/hosts"
         try {
-          grep "127.0.0.1 $VHOST" /etc/hosts > /dev/null 2>&1
+          grep "127.0.0.1[[:blank:]]*$VHOST" /etc/hosts > /dev/null 2>&1
           Log "127.0.0.1 $VHOST is in /etc/hosts"
         } catch {
           Log "127.0.0.1 $VHOST is not in /etc/hosts"
