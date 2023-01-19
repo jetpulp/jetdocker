@@ -43,6 +43,12 @@ PhpMyAdmin::Execute()
         Log "No phpmyadmin container to remove"
     }
 
+    # Test if the /tmp/phpmyadmin/config.user.inc.php is a folder
+    if [ -d /tmp/phpmyadmin/config.user.inc.php ]; then
+        rm -rf /tmp/phpmyadmin/config.user.inc.php
+        touch /tmp/phpmyadmin/config.user.inc.php
+    fi
+
     templateDir=/tmp/templates
     if [ "$OSTYPE" != 'linux-gnu' ]
     then
