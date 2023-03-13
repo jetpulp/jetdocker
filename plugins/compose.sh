@@ -70,6 +70,12 @@ Compose::InitDockerCompose()
             Log "Docker4Mac use docker-compose-osx.yml configuration file"
             dockerComposeFile="-f docker-compose.yml -f docker-compose-osx.yml"
         fi
+        if [[ $(/usr/bin/uname -m) == "arm64" ]]; then
+          if [ -f "docker-compose-arm64.yml" ]; then
+              Log "Mac M1/M2 use docker-compose-arm64.yml configuration file"
+              dockerComposeFile="-f docker-compose.yml -f docker-compose-arm64.yml"
+          fi
+        fi
     fi
 
     Compose::StartMailhog
