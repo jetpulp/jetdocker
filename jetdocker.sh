@@ -262,7 +262,7 @@ Jetdocker::GenerateSSLCertificate() {
 
     #recopie les certificats généré dans le dossier courrant du host afin de pouvoir les utiliser dans browser-sync en local
     Log "local copy SSL certificate"
-    docker run --rm --user "$(id -u):$(id -g)" -v jetdocker-ssl-certificate:/certs -v $(pwd):/certs_host jetpulp/jetdocker-ssl-certificate bash -c "cp -Rf certs/ certs_host/"
+    docker run --rm -v jetdocker-ssl-certificate:/certs -v $(pwd):/certs_host jetpulp/jetdocker-ssl-certificate bash -c "cp -Rf certs/ certs_host/"
     touch .gitignore
     grep -q -F certs .gitignore || echo 'certs' >> .gitignore
 }
