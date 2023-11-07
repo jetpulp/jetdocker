@@ -36,6 +36,22 @@ SearchReplaceDb::Execute()
 
     Compose::InitDockerCompose
 
+    Log "Start Database and wait for connexion is ready"
+    docker-compose ${dockerComposeFile} up -d db
+    # Wait for database connection is ready, see https://github.com/betalo-sweden/await
+    try {
+      if [ ! -z "${MYSQL_DATABASE:-}" ]; then
+        await -q -t 1m0s mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+      fi
+      if [ ! -z "${POSTGRES_DB:-}" ]; then
+        await -q -t 1m0s postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB > /dev/null 2>&1
+      fi
+    } catch {
+        echo "$(UI.Color.Red) Database failed to start in less than 1m"
+        echo " Check log with this command : docker logs ${COMPOSE_PROJECT_NAME}-db "
+        exit 1;
+    }
+
     SearchReplaceDb::Run
 
 }
