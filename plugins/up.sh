@@ -194,7 +194,7 @@ Up::StartReverseProxy() {
 
     Log "Up::StartReverseProxy"
     ## On force la déconnection aux réseaux puis la suppression des containers nginx
-    ## pour ensuite le redémarrer systématiquement, c'est plus roboste ainsi ...
+    ## pour ensuite le redémarrer systématiquement, c'est plus robuste ainsi ...
     for network in $(docker network ls --filter name=default -q);
     do
         try {
@@ -211,6 +211,7 @@ Up::StartReverseProxy() {
 
     echo "Start Nginx reverse-proxy"
     docker run -d -p 80:80 -p 443:443 --name nginx-reverse-proxy \
+        --platform ${DOCKER_NGINX_PLATFORM} \
         -v jetdocker-ssl-certificate:/certs  \
         -v /tmp/nginx:/etc/nginx/conf.d \
         -t nginx

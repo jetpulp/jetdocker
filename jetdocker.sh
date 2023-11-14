@@ -60,9 +60,16 @@ JETDOCKER_UP_DEFAULT_SERVICE=web
 JETDOCKER_DB_DEFAULT_SERVICE=db
 
 export PHP_INSTALL_PATH=/usr/local
+export DOCKER_NGINX_PLATFORM=linux/amd64
+
+# Mac OS M1, arm64 architecture :
 if [[ $(/usr/bin/uname -m) == "arm64" ]]; then
+  # Use different path for homebrew PHP installations
   export PHP_INSTALL_PATH=/opt/homebrew
+  # Use defaut platform linux/amd64 because every images are not available for arm64
   export DOCKER_DEFAULT_PLATFORM=linux/amd64
+  # Use platform linux/arm64 for nginx image because it's available, more stable and faster
+  export DOCKER_NGINX_PLATFORM=linux/arm64
 fi
 
 dockerComposeFile="";
