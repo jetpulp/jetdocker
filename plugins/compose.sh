@@ -254,55 +254,75 @@ init-data-containers()
         # fix errors because init-db.sh is not executable :
         chmod ugo+x db/*.sh
 
-        # shellcheck disable=SC2086
-        docker-compose ${dockerComposeFile} up -d db
-        echo "Restoring Database ......... "
-        echo ""
-        startTime=$(date +%s)
-        # Wait for database connection is ready, see https://github.com/betalo-sweden/await
-        if [ ! -z "${MYSQL_DATABASE:-}" ]; then
-          echo "Waiting ${DB_RESTORE_TIMEOUT} for mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE is ready ...... "
-        fi
-        if [ ! -z "${POSTGRES_DB:-}" ]; then
-          echo "Waiting ${DB_RESTORE_TIMEOUT} for postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB is ready ...... "
-        fi
-        echo ""
-        echo "$(UI.Color.Green)follow database restoration logs in an other terminal running this command : "
-        echo "$(UI.Color.Blue)  docker logs -f ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}"
-        echo "$(UI.Color.Yellow)(if you see errors in logs and the restoration is blocked, cancel it here with CTRL+C)$(UI.Color.Default)"
-        echo ""
-        echo "$(UI.Color.Green)  Please wait ${DB_RESTORE_TIMEOUT} ... "
-        echo ""
+        # If no healthcheck is configured in docker-compose.yml
+        # Start Database and wait for connexion is ready
         try {
-            if [ ! -z "${MYSQL_DATABASE:-}" ]; then
-              await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+            hasHealthCheck=$(docker-compose config | grep healthcheck 2> /dev/null | wc -l)
+            Log "hasHealthCheck : ${hasHealthCheck}"
+            if [ "${hasHealthCheck}" -gt 0 ]; then
+              Log "HealthCheck is configured in docker-compose.yml do not start db now"
             fi
-            if [ ! -z "${POSTGRES_DB:-}" ]; then
-              await -q -t ${DB_RESTORE_TIMEOUT} postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB > /dev/null 2>&1
-            fi
-            endTime=$(date +%s)
-            echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
-            try {
-                hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
-                Log "hasSearchReplace : ${hasSearchReplace}"
-                if [ "${hasSearchReplace}" -gt 0 ]; then
-                    SearchReplaceDb::Run
-                fi
-            } catch {
-                Log "No search-replace-db configured in docker-compose.yml"
-            }
         } catch {
-            echo "$(UI.Color.Red) DATABASE RESTORATION FAILED "
-            endTime=$(date +%s)
-            echo " Restoring since $(expr "$endTime" - "$startTime") s."
-            echo " Check log with this command : docker logs ${COMPOSE_PROJECT_NAME}-db "
-            echo " The database dump might be to big for beeing restaured in less than the ${DB_RESTORE_TIMEOUT} await timeout "
-            echo " You can increase this timeout in env.sh DB_RESTORE_TIMEOUT parameter "
-            echo " then re-run with jetdocker --delete-data up "
-            exit 1;
+            Log "HealthCheck is not configured in docker-compose.yml Start db now and wait for connexion is ready"
+            Compose::StartDBFromBackupResoration
         }
 
+
     }
+}
+
+Compose::StartDBFromBackupResoration()
+{
+    Log "Compose::StartDBFromBackupResoration"
+
+    # shellcheck disable=SC2086
+    docker-compose ${dockerComposeFile} up -d db
+    echo "Restoring Database ......... "
+    echo ""
+    startTime=$(date +%s)
+    # Wait for database connection is ready, see https://github.com/betalo-sweden/await
+    if [ ! -z "${MYSQL_DATABASE:-}" ]; then
+      echo "Waiting ${DB_RESTORE_TIMEOUT} for mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE is ready ...... "
+    fi
+    if [ ! -z "${POSTGRES_DB:-}" ]; then
+      echo "Waiting ${DB_RESTORE_TIMEOUT} for postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB is ready ...... "
+    fi
+    echo ""
+    echo "$(UI.Color.Green)follow database restoration logs in an other terminal running this command : "
+    echo "$(UI.Color.Blue)  docker logs -f ${COMPOSE_PROJECT_NAME}-${JETDOCKER_DB_DEFAULT_SERVICE}"
+    echo "$(UI.Color.Yellow)(if you see errors in logs and the restoration is blocked, cancel it here with CTRL+C)$(UI.Color.Default)"
+    echo ""
+    echo "$(UI.Color.Green)  Please wait ${DB_RESTORE_TIMEOUT} ... "
+    echo ""
+    try {
+        if [ ! -z "${MYSQL_DATABASE:-}" ]; then
+          await -q -t ${DB_RESTORE_TIMEOUT} mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@localhost:${DOCKER_PORT_MYSQL}/$MYSQL_DATABASE > /dev/null 2>&1
+        fi
+        if [ ! -z "${POSTGRES_DB:-}" ]; then
+          await -q -t ${DB_RESTORE_TIMEOUT} postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${DOCKER_PORT_POSTGRES}/$POSTGRES_DB > /dev/null 2>&1
+        fi
+        endTime=$(date +%s)
+        echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
+        try {
+            hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
+            Log "hasSearchReplace : ${hasSearchReplace}"
+            if [ "${hasSearchReplace}" -gt 0 ]; then
+                SearchReplaceDb::Run
+            fi
+        } catch {
+            Log "No search-replace-db configured in docker-compose.yml"
+        }
+    } catch {
+        echo "$(UI.Color.Red) DATABASE RESTORATION FAILED "
+        endTime=$(date +%s)
+        echo " Restoring since $(expr "$endTime" - "$startTime") s."
+        echo " Check log with this command : docker logs ${COMPOSE_PROJECT_NAME}-db "
+        echo " The database dump might be to big for beeing restaured in less than the ${DB_RESTORE_TIMEOUT} await timeout "
+        echo " You can increase this timeout in env.sh DB_RESTORE_TIMEOUT parameter "
+        echo " then re-run with jetdocker --delete-data up "
+        exit 1;
+    }
+
 }
 
 Compose::InitExtraDataVolumes()
