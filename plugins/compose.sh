@@ -155,9 +155,9 @@ Compose::CheckLocalHostName()
           Log "127.0.0.1 $VHOST is in /etc/hosts"
         } catch {
           Log "127.0.0.1 $VHOST is not in /etc/hosts"
-          echo "$(UI.Color.Yellow)Do you want to add 127.0.0.1 $VHOST in your /etc/hosts file ? (y/n)$(UI.Color.Default)"
+          echo "$(UI.Color.Yellow)Do you want to add 127.0.0.1 $VHOST in your /etc/hosts file ? (Y/n)$(UI.Color.Default)"
           read -r yes
-          if [[ "$yes" = 'y' || "$yes" = 'yes' ]]; then
+          if [[ "$yes" = 'Y' || "$yes" = 'y' || "$yes" = 'yes' || "$yes" = '' ]]; then
               Log "Add 127.0.0.1 $VHOST in /etc/hosts"
               echo "127.0.0.1 $VHOST" | sudo tee -a /etc/hosts > /dev/null
           fi
