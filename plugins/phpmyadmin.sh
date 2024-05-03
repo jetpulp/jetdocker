@@ -81,7 +81,7 @@ EOM
         -v /tmp/phpmyadmin:/etc/phpmyadmin/ \
         -v /var/run/docker.sock:/tmp/docker.sock:ro \
         -v $templateDir:/etc/docker-gen/templates \
-        -t jwilder/docker-gen \
+        -t jwilder/docker-gen docker-gen \
         /etc/docker-gen/templates/pma.config.tmpl /etc/phpmyadmin/config.user.inc.php
 
     echo "Start PhpMyAdmin"
