@@ -141,6 +141,8 @@ Jetdocker::Update()
     previousPath=$(pwd)
     cd "$JETDOCKER" || exit
     echo "$(UI.Color.Green)"
+    echo "Pulling latest version of jwilder/docker-gen"
+    docker pull jwilder/docker-gen
     echo "Upgrading jetdocker"
     echo ""
     if git pull --rebase --stat origin master
