@@ -82,7 +82,7 @@ Compose::InitDockerCompose()
 
     Compose::CheckOpenPorts
 
-    Compose::CheckLocalHostName
+#    Compose::CheckLocalHostName
 
     if [ "$optDelete" = true ]; then
         # Delete data volumes
