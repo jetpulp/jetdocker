@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['up']='Up::Execute' # Function name
-COMMANDS_USAGE['00']="  up                       Start docker-compose after initializing context (databases, ports, proxy, etc... )"
+COMMANDS_USAGE['00']="  up                       Start ${DOCKER_COMPOSE} after initializing context (databases, ports, proxy, etc... )"
 
 optDelete=false
 optBuild=false
@@ -68,8 +68,8 @@ Up::Execute()
    #stop and remove docker containers when stop script
    trap "Up::Stop" SIGINT SIGTERM
 
-   #trap "try { docker-compose stop;docker-compose rm -f -v } catch { Log 'End' }" SIGINT SIGTERM
-   Log "RUN WHEN EXIT : docker-compose stop;docker-compose rm -f -v"
+   #trap "try { ${DOCKER_COMPOSE} stop;${DOCKER_COMPOSE} rm -f -v } catch { Log 'End' }" SIGINT SIGTERM
+   Log "RUN WHEN EXIT : ${DOCKER_COMPOSE} stop;${DOCKER_COMPOSE} rm -f -v"
 
    # On the first run, or on asked option : build the app
    if [ "$optBuild" = true ] ; then
@@ -85,9 +85,9 @@ Up::Execute()
 
    Symfony::Start
 
-   ${DEBUG} && docker-compose ${dockerComposeFile} config
-   echo "$(UI.Color.Green)docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
-   docker-compose ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
+   ${DEBUG} && ${DOCKER_COMPOSE} ${dockerComposeFile} config
+   echo "$(UI.Color.Green)${DOCKER_COMPOSE} ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}$(UI.Color.Default)"
+   ${DOCKER_COMPOSE} ${dockerComposeFile} up -d ${JETDOCKER_UP_DEFAULT_SERVICE}
 
    Up::StartReverseProxy
 
@@ -127,12 +127,12 @@ Up::Execute()
         # log in standard output
         try {
             Symfony::Logs
-            docker-compose logs --follow
+            ${DOCKER_COMPOSE} logs --follow
         } catch {
-            Log "End docker-compose logs --follow"
+            Log "End ${DOCKER_COMPOSE} logs --follow"
         }
     else
-        echo "$(UI.Color.Green) For more informations run : docker-compose logs $(UI.Color.Default)"
+        echo "$(UI.Color.Green) For more informations run : ${DOCKER_COMPOSE} logs $(UI.Color.Default)"
     fi
 
 }
@@ -146,11 +146,11 @@ Up::Usage()
   echo "  -d, --delete-data        Delete data docker volumes before start, forcing it to restore"
   echo "  -b, --build              Force building (assets, etc...) before start"
   echo "  -x, --xdebug             Enable xdebug in PHP container"
-  echo "  -s, --silent             Don't run docker-compose log --follow after start"
+  echo "  -s, --silent             Don't run ${DOCKER_COMPOSE} log --follow after start"
   echo "  -o, --open               Open browser after start on the $SERVER_NAME url"
   echo "  -h, --help               Print help information and quit"
   echo ""
-  echo "Start docker-compose after initializing context (databases, ports, proxy, etc... )"
+  echo "Start ${DOCKER_COMPOSE} after initializing context (databases, ports, proxy, etc... )"
   echo ""
 }
 
@@ -339,8 +339,8 @@ Up::Stop()
 {
     try {
        Symfony::Stop
-       docker-compose stop
-       docker-compose rm -f -v
+       ${DOCKER_COMPOSE} stop
+       ${DOCKER_COMPOSE} rm -f -v
        Jetdocker::ExecuteFunctionIfExists Up::StopLocalApp
        docker network disconnect --force ${COMPOSE_PROJECT_NAME}_default nginx-reverse-proxy
        docker network rm ${COMPOSE_PROJECT_NAME}_default

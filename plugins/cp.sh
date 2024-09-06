@@ -33,9 +33,9 @@ Cp::Execute()
     if [ -z "${JETDOCKER_TERM_DEFAULT_SERVICE:-}" ]; then
         try {
             Compose::InitDockerCompose
-            docker-compose ${dockerComposeFile} config --services | tr '\n' ', ' > /tmp/jetdocker_services
+            ${DOCKER_COMPOSE} ${dockerComposeFile} config --services | tr '\n' ', ' > /tmp/jetdocker_services
         } catch {
-            Log "docker-compose ${dockerComposeFile} "$@" stopped"
+            Log "${DOCKER_COMPOSE} ${dockerComposeFile} "$@" stopped"
         }
         echo "Which service do you want to copy from ? ($(cat /tmp/jetdocker_services))"
         read -r service

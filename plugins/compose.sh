@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['compose']='Compose::Execute' # Function name
-COMMANDS_USAGE['10']="  compose                  Run a docker-compose command (alias for docker-compose run --rm)"
+COMMANDS_USAGE['10']="  compose                  Run a ${DOCKER_COMPOSE} command (alias for ${DOCKER_COMPOSE} run --rm)"
 
 Compose::Execute()
 {
@@ -32,9 +32,9 @@ Compose::Execute()
     Compose::InitDockerCompose
 
     try {
-        docker-compose ${dockerComposeFile} "$@"
+        ${DOCKER_COMPOSE} ${dockerComposeFile} "$@"
     } catch {
-        Log "docker-compose ${dockerComposeFile} "$@" stopped"
+        Log "${DOCKER_COMPOSE} ${dockerComposeFile} "$@" stopped"
     }
 
 }
@@ -47,9 +47,9 @@ Compose::Usage()
   echo "$(UI.Color.Yellow)Options:$(UI.Color.Default)"
   echo "  -h, --help               Print help information and quit"
   echo ""
-  echo "Run any docker-compose command via 'jetdocker compose': in the docker-compose documentation above, replace 'docker-compose' by 'jetdocker compose'"
+  echo "Run any ${DOCKER_COMPOSE} command via 'jetdocker compose': in the ${DOCKER_COMPOSE} documentation above, replace '${DOCKER_COMPOSE}' by 'jetdocker compose'"
   echo ""
-  docker-compose --help
+  ${DOCKER_COMPOSE} --help
 }
 
 
@@ -60,20 +60,20 @@ Compose::InitDockerCompose()
     Log "Jetdocker::InitDockerCompose"
 
     if [ "$dockerComposeInitialised" = true ]; then
-        Log "docker-compose already initialised"
+        Log "docker compose already initialised"
         return;
     fi
 
     # MacOSX : add specific compose config file
     if [ "$OSTYPE" != 'linux-gnu' ]; then
-        if [ -f "docker-compose-osx.yml" ]; then
-            Log "Docker4Mac use docker-compose-osx.yml configuration file"
-            dockerComposeFile="-f docker-compose.yml -f docker-compose-osx.yml"
+        if [ -f ${dockerComposeFileOsx} ]; then
+            Log "Docker4Mac use ${dockerComposeFileOsx} configuration file"
+            dockerComposeFile="-f ${dockerComposeFileBase} -f ${dockerComposeFileOsx}"
         fi
         if [[ $(/usr/bin/uname -m) == "arm64" ]]; then
-          if [ -f "docker-compose-arm64.yml" ]; then
-              Log "Mac M1/M2 use docker-compose-arm64.yml configuration file"
-              dockerComposeFile="-f docker-compose.yml -f docker-compose-arm64.yml"
+          if [ -f ${dockerComposeFileArm64} ]; then
+              Log "Mac M1/M2 use ${dockerComposeFileArm64} configuration file"
+              dockerComposeFile="-f ${dockerComposeFileBase} -f ${dockerComposeFileArm64}"
           fi
         fi
     fi
@@ -93,12 +93,12 @@ Compose::InitDockerCompose()
     # Initialise data containers
     Compose::InitDataVolumes
 
-    # Pull images from docker-compose config every day
+    # Pull images from docker compose config every day
     if [ "$(Jetdocker::CheckLastExecutionOlderThanOneDay  "-${COMPOSE_PROJECT_NAME}")" == "true" ]; then
         Log "Force optBuild to true because it's the first run of day"
         optBuild=true
-        Log "docker-compose ${dockerComposeFile} pull --ignore-pull-failures"
-        docker-compose ${dockerComposeFile} pull --ignore-pull-failures
+        Log "${DOCKER_COMPOSE} ${dockerComposeFile} pull --ignore-pull-failures"
+        ${DOCKER_COMPOSE} ${dockerComposeFile} pull --ignore-pull-failures
     fi
     dockerComposeInitialised=true
 
@@ -254,16 +254,16 @@ init-data-containers()
         # fix errors because init-db.sh is not executable :
         chmod ugo+x db/*.sh
 
-        # If no healthcheck is configured in docker-compose.yml
+        # If no healthcheck is configured in compose.yaml
         # Start Database and wait for connexion is ready
         try {
-            hasHealthCheck=$(docker-compose config | grep healthcheck 2> /dev/null | wc -l)
+            hasHealthCheck=$(${DOCKER_COMPOSE} config | grep healthcheck 2> /dev/null | wc -l)
             Log "hasHealthCheck : ${hasHealthCheck}"
             if [ "${hasHealthCheck}" -gt 0 ]; then
-              Log "HealthCheck is configured in docker-compose.yml do not start db now"
+              Log "HealthCheck is configured in compose.yaml do not start db now"
             fi
         } catch {
-            Log "HealthCheck is not configured in docker-compose.yml Start db now and wait for connexion is ready"
+            Log "HealthCheck is not configured in compose.yaml Start db now and wait for connexion is ready"
             Compose::StartDBFromBackupResoration
         }
 
@@ -276,7 +276,7 @@ Compose::StartDBFromBackupResoration()
     Log "Compose::StartDBFromBackupResoration"
 
     # shellcheck disable=SC2086
-    docker-compose ${dockerComposeFile} up -d db
+    ${DOCKER_COMPOSE} ${dockerComposeFile} up -d db
     echo "Restoring Database ......... "
     echo ""
     startTime=$(date +%s)
@@ -304,13 +304,13 @@ Compose::StartDBFromBackupResoration()
         endTime=$(date +%s)
         echo "$(UI.Color.Green) DATABASE RESTORED in $(expr "$endTime" - "$startTime") s !! $(UI.Color.Default)"
         try {
-            hasSearchReplace=$(docker-compose config | grep search-replace-db 2> /dev/null | wc -l)
+            hasSearchReplace=$(${DOCKER_COMPOSE} config | grep search-replace-db 2> /dev/null | wc -l)
             Log "hasSearchReplace : ${hasSearchReplace}"
             if [ "${hasSearchReplace}" -gt 0 ]; then
                 SearchReplaceDb::Run
             fi
         } catch {
-            Log "No search-replace-db configured in docker-compose.yml"
+            Log "No search-replace-db configured in compose.yaml"
         }
     } catch {
         echo "$(UI.Color.Red) DATABASE RESTORATION FAILED "
@@ -349,6 +349,6 @@ Compose::StartMailhog()
         } catch {
             Log "no mailhog container"
         }
-        docker-compose --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
+        ${DOCKER_COMPOSE} --project-name=jetdocker -f "$JETDOCKER/docker-compose.yml" up -d
     }
 }

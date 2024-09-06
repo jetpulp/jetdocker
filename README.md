@@ -2,10 +2,10 @@ Jetdocker
 ==============
 ![Jetdocker](https://raw.githubusercontent.com/docker/compose/master/logo.png "Docker Compose Logo")
 
-`jetdocker` is a wrapper around docker-compose, especially opinionated for PHP developpement, but not only.
+`jetdocker` is a wrapper around docker compose, especially opinionated for PHP developpement, but not only.
 
 Some of the features are :
-* can run several docker-compose projects, bind automatically to free ports if some try to bind on the same, using a reverse-http-proxy
+* can run several docker compose projects, bind automatically to free ports if some try to bind on the same, using a reverse-http-proxy
 * smooth database restoration, can use Search and Replace DB automatically
 * SSL-TLS auto-signed certificate automatically created and configured, in order to test on https
 * xdebug integration
@@ -19,7 +19,7 @@ __Disclaimer:__ _Jetdocker works on macOS and Linux._
 
 * Unix-like operating system (macOS or Linux)
 * bash 4
-* `docker` and `docker-compose` should be installed
+* `docker` and `docker compose` should be installed, also compatible with `docker-compose` 
 * `php` and `xdebug` PHP extension
 * `symfony` should be installed
 * `git` should be installed
@@ -89,14 +89,14 @@ In order to use `jetdocker` in your project you need a `docker` directory, conta
 
 You can find some examples of docker config directory in the `examples` directory of this repository, "ready to use" for wordpress, magento or symfony projects.
 
-The bare minimum is a `docker-compose.yml` and a `env.sh` file in this directory.
+The bare minimum is a `compose.yaml` ( or `compose.yml`, `docker-compose.yaml`, `docker-compose.yml`) and a `env.sh` file in this directory.
 
 The env.sh file is required in order to define some environement variables on each project
 
 * COMPOSE_PROJECT_NAME : (required) a prefix used for naming containers and volumes
-* JETDOCKER_UP_DEFAULT_SERVICE : (optional, default=web) docker-compose service used by `jetdocker up`
-* JETDOCKER_DB_DEFAULT_SERVICE : (optional, default=db) docker-compose service used for database restoration
-* JETDOCKER_TERM_DEFAULT_SERVICE : (optional) docker-compose service used by `jetdocker term`
+* JETDOCKER_UP_DEFAULT_SERVICE : (optional, default=web) docker compose service used by `jetdocker up`
+* JETDOCKER_DB_DEFAULT_SERVICE : (optional, default=db) docker compose service used for database restoration
+* JETDOCKER_TERM_DEFAULT_SERVICE : (optional) docker compose service used by `jetdocker term`
 * DB_RESTORE_TIMEOUT : (optional, default=3m0s) database restoration timeout
 * SERVER_NAME : (required) hostname
 * VIRTUAL_HOST : (required) list of hostnames, separated by comma
@@ -129,7 +129,7 @@ Up::StartLocalApp()
 }
 ```
 
-The main usage of jetdocker is to run a docker-compose config :
+The main usage of jetdocker is to run a docker compose config :
 
 ```shell
 jetdocker up
@@ -150,9 +150,9 @@ jetdocker --help
 
 Here are the different commands
 
-* up : Start docker-compose after initializing context (databases, ports, proxy, etc... )
-* term : Open a shell terminal into one of docker-compose service
-* compose : Run a docker-compose command (alias for docker-compose run --rm)
+* up : Start docker compose after initializing context (databases, ports, proxy, etc... )
+* term : Open a shell terminal into one of docker compose service
+* compose : Run a docker compose command (alias for docker compose run --rm)
 * free-disk-space :Free disk space utility
 * update : Update jetdocker to the latest version
 * search-replace-db : Run Search Replace DB in a container

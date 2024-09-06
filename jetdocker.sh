@@ -4,7 +4,7 @@
 #
 #
 
-VERSION=2.0.0
+VERSION=3.0.0
 
 # Set JETDOCKER must be set during install
 if [[ -z "$JETDOCKER" ]]; then
@@ -54,9 +54,9 @@ export POSTGRES_ROOT_PASSWORD=root
 export POSTGRES_USER=root
 export POSTGRES_PASSWORD=root
 
-# Defaut docker-compose startup service
+# Defaut docker compose startup service
 JETDOCKER_UP_DEFAULT_SERVICE=web
-# Defaut docker-compose startup service
+# Defaut docker compose startup service
 JETDOCKER_DB_DEFAULT_SERVICE=db
 
 export PHP_INSTALL_PATH=/usr/local
@@ -179,14 +179,37 @@ Jetdocker::CheckProject()
 
     Log "We're in $optConfigPath directory"
 
-    # Check there's a docker-compose file in current directory
-    if [ ! -f 'docker-compose.yml' ]; then
+    # Check there's a docker compose file in current directory
+    if [ ! -f 'compose.yaml' ] && [ ! -f 'compose.yml' ] && [ ! -f 'docker-compose.yaml' ] && [ ! -f 'docker-compose.yml' ]; then
         echo ""
-        echo "$(UI.Color.Red)  docker-compose.yml file doesn't exist in $(pwd)!"
+        echo "$(UI.Color.Red) compose.yaml, compose.yml, docker-compose.yaml or docker-compose.yml file doesn't exist in $(pwd)!"
         echo ""
         exit 1
     fi
-    Log "docker-compose.yml file exist"
+    if [ -f 'docker-compose.yml' ]; then
+      Log "docker-compose.yml file exist"
+      export dockerComposeFileBase='docker-compose.yml'
+      export dockerComposeFileOsx='docker-compose-osx.yml'
+      export dockerComposeFileArm64='docker-compose-arm64.yml'
+    fi
+    if [ -f 'docker-compose.yaml' ]; then
+      Log "docker-compose.yaml file exist"
+      export dockerComposeFileBase='docker-compose.yaml'
+      export dockerComposeFileOsx='docker-compose-osx.yaml'
+      export dockerComposeFileArm64='docker-compose-arm64.yaml'
+    fi
+    if [ -f 'compose.yml' ]; then
+      Log "compose.yml file exist"
+      export dockerComposeFileBase='compose.yml'
+      export dockerComposeFileOsx='compose-osx.yml'
+      export dockerComposeFileArm64='compose-arm64.yml'
+    fi
+    if [ -f 'compose.yaml' ]; then
+      Log "compose.yaml file exist"
+      export dockerComposeFileBase='compose.yaml'
+      export dockerComposeFileOsx='compose-osx.yaml'
+      export dockerComposeFileArm64='compose-arm64.yaml'
+    fi
 
     # Check there's a env.sh file in current directory
     if [ ! -f 'env.sh' ]; then
@@ -339,7 +362,17 @@ namespace jetdocker
 ${DEBUG} && Log::AddOutput jetdocker DEBUG
 
 ${DEBUG} && docker --version
-${DEBUG} && docker-compose --version
+
+export DOCKER_COMPOSE="docker compose"
+try {
+  ${DOCKER_COMPOSE} >/dev/null 2>&1
+  ${DEBUG} && docker compose version
+} catch {
+  export DOCKER_COMPOSE="docker-compose"
+  ${DEBUG} &&docker-compose --version
+}
+Log "docker compose command = ${DOCKER_COMPOSE}"
+
 Log "optDebug = ${optDebug}"
 Log "optConfigPath = ${optConfigPath}"
 Log "optVersion = ${optVersion}"
@@ -379,6 +412,7 @@ if [ -n "${COMMANDS_STANDALONE[$command]}" ]; then
 fi
 
 Jetdocker::CheckProject
+
 if [ $? -eq 1 ]; then
    exit 1
 fi

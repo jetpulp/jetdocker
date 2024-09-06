@@ -37,7 +37,7 @@ SearchReplaceDb::Execute()
     Compose::InitDockerCompose
 
     Log "Start Database and wait for connexion is ready"
-    docker-compose ${dockerComposeFile} up -d db
+    ${DOCKER_COMPOSE} ${dockerComposeFile} up -d db
     # Wait for database connection is ready, see https://github.com/betalo-sweden/await
     try {
       if [ ! -z "${MYSQL_DATABASE:-}" ]; then
@@ -92,8 +92,8 @@ SearchReplaceDb::Run()
 
     for searchAndReplace in "${SEARCH_AND_REPLACE[@]}"
     do
-      ${DEBUG} && echo "docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS"
-      docker-compose run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS
+      ${DEBUG} && echo "${DOCKER_COMPOSE} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS"
+      ${DOCKER_COMPOSE} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS
     done
 
 }
@@ -108,8 +108,8 @@ SearchReplaceDb::Usage()
   echo "  see all Search Replace DB script options below"
   echo ""
   echo "Run Search Replace DB script (see https://interconnectit.com/products/search-and-replace-for-wordpress-databases/)"
-  echo "The jetpulp/search-replace-db docker image must be configured in docker-compose.yml"
+  echo "The jetpulp/search-replace-db docker image must be configured in ${dockerComposeFileBase}"
   echo ""
-  docker-compose run --rm search-replace-db php srdb.cli.php --help
+  ${DOCKER_COMPOSE} run --rm search-replace-db php srdb.cli.php --help
 }
 

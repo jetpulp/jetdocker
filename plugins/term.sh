@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 COMMANDS['term']='Term::Execute' # Function name
-COMMANDS_USAGE['05']="  term                     Open a shell terminal into one of docker-compose service"
+COMMANDS_USAGE['05']="  term                     Open a shell terminal into one of ${DOCKER_COMPOSE} service"
 
 optUser=''
 
@@ -40,9 +40,9 @@ Term::Execute()
     if [ -z "${*:-}" ]; then
         if [ -z "${JETDOCKER_TERM_DEFAULT_SERVICE:-}" ]; then
             try {
-                docker-compose ${dockerComposeFile} config --services | tr '\n' ', ' > /tmp/jetdocker_services
+                ${DOCKER_COMPOSE} ${dockerComposeFile} config --services | tr '\n' ', ' > /tmp/jetdocker_services
             } catch {
-                Log "docker-compose ${dockerComposeFile} "$@" stopped"
+                Log "${DOCKER_COMPOSE} ${dockerComposeFile} "$@" stopped"
             }
             echo "Which service do you want to connect to ? ($(cat /tmp/jetdocker_services))"
             read -r service
@@ -62,16 +62,16 @@ Term::Execute()
     fi
 
     echo "Connection to $service"
-    Log "docker-compose ${dockerComposeFile} exec $user $service bash"
+    Log "${DOCKER_COMPOSE} ${dockerComposeFile} exec $user $service bash"
     try {
-        docker-compose ${dockerComposeFile} exec "$user" "$service" bash 2> /tmp/jetdocker-error
+        ${DOCKER_COMPOSE} ${dockerComposeFile} exec "$user" "$service" bash 2> /tmp/jetdocker-error
     } catch {
 
         if [ "$user" == '' ]; then
 
-            Log "docker-compose ${dockerComposeFile} run --rm $service bash"
+            Log "${DOCKER_COMPOSE} ${dockerComposeFile} run --rm $service bash"
             try {
-                docker-compose ${dockerComposeFile} run --rm "$service" bash 2> /tmp/jetdocker-error
+                ${DOCKER_COMPOSE} ${dockerComposeFile} run --rm "$service" bash 2> /tmp/jetdocker-error
             } catch {
                 cat /tmp/jetdocker-error
                 echo ""
@@ -100,7 +100,7 @@ Term::Usage()
   echo "  -u, --user               Connect with a specific user"
   echo "  -h, --help               Print help information and quit"
   echo ""
-  echo "Open a shell terminal into one of docker-compose service"
-  echo "If [SERVICE] is not specified, it will connect to the service defined in the environement var JETDOCKER_TERM_DEFAULT_SERVICE, instead it list all available services in the docker-compose.yml file"
+  echo "Open a shell terminal into one of ${DOCKER_COMPOSE} service"
+  echo "If [SERVICE] is not specified, it will connect to the service defined in the environement var JETDOCKER_TERM_DEFAULT_SERVICE, instead it list all available services in the ${dockerComposeFileBase} file"
 }
 
