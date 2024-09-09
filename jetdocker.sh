@@ -366,10 +366,10 @@ ${DEBUG} && docker --version
 export DOCKER_COMPOSE="docker compose"
 try {
   ${DOCKER_COMPOSE} >/dev/null 2>&1
-  ${DEBUG} && docker compose version
+  ${DEBUG} && docker --version || true
 } catch {
   export DOCKER_COMPOSE="docker-compose"
-  ${DEBUG} &&docker-compose --version
+  ${DEBUG} && docker-compose --version || true
 }
 Log "docker compose command = ${DOCKER_COMPOSE}"
 
