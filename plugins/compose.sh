@@ -252,7 +252,7 @@ init-data-containers()
         DatabaseBackup::ReplaceInDumpFile
 
         # fix errors because init-db.sh is not executable :
-        chmod ugo+x db/*.sh
+        [ -f db/*.sh ] && chmod ugo+x db/*.sh
 
         # If no healthcheck is configured in compose.yaml
         # Start Database and wait for connexion is ready
