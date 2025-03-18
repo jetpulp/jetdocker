@@ -92,8 +92,8 @@ SearchReplaceDb::Run()
 
     for searchAndReplace in "${SEARCH_AND_REPLACE[@]}"
     do
-      ${DEBUG} && echo "${DOCKER_COMPOSE} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS"
-      ${DOCKER_COMPOSE} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS
+      ${DEBUG} && echo "${DOCKER_COMPOSE} ${dockerComposeFile} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS"
+      ${DOCKER_COMPOSE} ${dockerComposeFile} run --rm search-replace-db php srdb.cli.php --host db --name $MYSQL_DATABASE --user root --pass root $searchAndReplace $SEARCH_AND_REPLACE_OPTIONS
     done
 
 }
