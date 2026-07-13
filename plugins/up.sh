@@ -315,7 +315,7 @@ EOM
         --volumes-from nginx-reverse-proxy \
         -v /var/run/docker.sock:/tmp/docker.sock:ro \
         -v $templateDir:/etc/docker-gen/templates \
-        -t jwilder/docker-gen@sha256:722ed281bf25e53897cfc01653f24d023d129dddee58b60be8a007c9caa21a95 \
+        -t jwilder/docker-gen@sha256:17949c93e590a259d61db3eaebeeb7f0e519520916eb0a0057dbc4cb2c9325fb \
         -notify-sighup nginx-reverse-proxy -watch -only-exposed \
         /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
 

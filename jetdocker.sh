@@ -142,7 +142,7 @@ Jetdocker::Update()
     cd "$JETDOCKER" || exit
     echo "$(UI.Color.Green)"
     echo "Pulling pinned version of jwilder/docker-gen (0.17.2, verified working on arm64 - 2026-07-13)"
-    docker pull jwilder/docker-gen@sha256:722ed281bf25e53897cfc01653f24d023d129dddee58b60be8a007c9caa21a95
+    docker pull jwilder/docker-gen@sha256:17949c93e590a259d61db3eaebeeb7f0e519520916eb0a0057dbc4cb2c9325fb
     echo "Upgrading jetdocker"
     echo ""
     if git pull --rebase --stat origin master
