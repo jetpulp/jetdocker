@@ -149,6 +149,19 @@ Compose::CheckLocalHostName()
 
     for VHOST in $(echo $VIRTUAL_HOST | tr "," " ")
     do
+        # Skip the /etc/hosts prompt when the host already resolves
+        # (wildcard DNS via dnsmasq, /etc/resolver, company DNS, ...)
+        if [ "$OSTYPE" != 'linux-gnu' ]; then
+            if dscacheutil -q host -a name "$VHOST" 2>/dev/null | grep -q ip_address; then
+                Log "$VHOST already resolves, skip /etc/hosts check"
+                continue
+            fi
+        else
+            if getent hosts "$VHOST" > /dev/null 2>&1; then
+                Log "$VHOST already resolves, skip /etc/hosts check"
+                continue
+            fi
+        fi
         Log "Check if $VHOST is in /etc/hosts"
         try {
           grep "127.0.0.1[[:blank:]]*$VHOST" /etc/hosts > /dev/null 2>&1
