@@ -12,3 +12,8 @@ cacerts/rootCA.*
 #
 bash_home/*
 !bash_home/.bashrc
+
+# Claude Code — fichiers personnels (machine-locaux)
+/CLAUDE*.local.md
+/.claude/settings.local.json
+/.claude/agents/
